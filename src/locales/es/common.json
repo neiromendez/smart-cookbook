@@ -219,5 +219,10 @@
     "privacy": "Privacidad",
     "terms": "Términos",
     "disclaimer": "Disclaimer"
+  },
+  "notFound": {
+    "title": "¡Ups! Receta no encontrada",
+    "message": "Parece que te has salido de la cocina. Esta página no está en nuestro menú.",
+    "backHome": "Volver al Inicio"
   }
 }

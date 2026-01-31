@@ -219,5 +219,10 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "disclaimer": "Disclaimer"
+  },
+  "notFound": {
+    "title": "Oops! Recipe not found",
+    "message": "It seems you've wandered out of the kitchen. This page is not on our menu.",
+    "backHome": "Back to Home"
   }
 }
