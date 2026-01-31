@@ -1,0 +1,223 @@
+{
+  "app": {
+    "name": "Smart Cookbook",
+    "tagline": "Tu asistente de cocina con IA"
+  },
+  "nav": {
+    "home": "Inicio",
+    "settings": "Configuración",
+    "history": "Historial",
+    "savedIdeas": "Ideas Guardadas",
+    "savedRecipes": "Recetas Guardadas"
+  },
+  "ideas": {
+    "search": "Buscar ideas...",
+    "noResults": "Sin resultados",
+    "clearFilters": "Limpiar filtros",
+    "protein": {
+      "chicken": "Pollo",
+      "beef": "Res",
+      "pork": "Cerdo",
+      "fish": "Pescado",
+      "seafood": "Mariscos",
+      "egg": "Huevo",
+      "tofu": "Tofu",
+      "legumes": "Legumbres",
+      "none": "Vegetariano"
+    },
+    "meal": {
+      "breakfast": "Desayuno",
+      "lunch": "Almuerzo",
+      "dinner": "Cena",
+      "snack": "Snack",
+      "dessert": "Postre"
+    }
+  },
+  "home": {
+    "title": "¿Qué hay en tu nevera?",
+    "subtitle": "Dime qué ingredientes tienes y te sugeriré recetas deliciosas",
+    "placeholder": "Ej: pollo, arroz, tomates, cebolla, ajo...",
+    "generate": "Generar Receta",
+    "generating": "Cocinando..."
+  },
+  "vibes": {
+    "title": "¿Qué tipo de receta buscas?",
+    "protein": "Alto en Proteína",
+    "veggie": "Vegetariano",
+    "quick": "Rápido (<15 min)",
+    "healthy": "Saludable"
+  },
+  "status": {
+    "idle": "Listo para cocinar",
+    "idleSubtext": "Escribe los ingredientes que tienes",
+    "validating": "Validando tu petición...",
+    "validatingSubtext": "Verificando que todo esté en orden",
+    "connecting": "Conectando con {{provider}}...",
+    "connectingSubtext": "Estableciendo conexión segura",
+    "streaming": "Generando receta...",
+    "streamingSubtext": "{{tokens}} tokens generados",
+    "completed": "¡Receta lista!",
+    "completedSubtext": "Generada en {{duration}} segundos",
+    "error": "Error al generar",
+    "errorSubtext": "Ver detalles abajo"
+  },
+  "errors": {
+    "invalidApiKey": {
+      "title": "API Key Inválida",
+      "message": "La API key proporcionada no es válida o ha sido revocada."
+    },
+    "insufficientQuota": {
+      "title": "Créditos Agotados",
+      "message": "Tu cuenta no tiene créditos suficientes."
+    },
+    "paymentRequired": {
+      "title": "Pago Requerido",
+      "message": "¡No necesitas pagar! Usa un proveedor 100% GRATUITO:"
+    },
+    "rateLimitExceeded": {
+      "title": "Demasiadas Solicitudes",
+      "message": "Has excedido el límite de solicitudes por minuto."
+    },
+    "networkError": {
+      "title": "Error de Conexión",
+      "message": "No se pudo conectar con el proveedor de IA."
+    },
+    "promptInjection": {
+      "title": "Solicitud Inválida",
+      "message": "Tu mensaje contiene patrones no permitidos."
+    },
+    "retry": "Intentar de nuevo",
+    "retrying": "Reintentando en {{seconds}}s...",
+    "cancel": "Cancelar",
+    "solutions": "Cómo solucionarlo:",
+    "freeAlternatives": "Proveedores GRATUITOS disponibles:",
+    "use": "Usar",
+    "freeReasons": {
+      "cerebras": "1M tokens/día, el más rápido (2600 tok/s)",
+      "google": "Ilimitado gratis, sin tarjeta",
+      "groq": "Ultra-rápido (300 tok/s), sin tarjeta",
+      "huggingface": "Serverless API gratuita, modelos open-source",
+      "opencode": "Modelos free como GPT-5 Nano y Fast One",
+      "openrouter": "$5 créditos + 20+ modelos gratis"
+    },
+    "missingKey": {
+      "title": "API Key no configurada",
+      "message": "Necesitas configurar una API key para generar recetas.",
+      "solution1": "Selecciona un proveedor gratuito de la lista disponible",
+      "solution2": "Configura tu API key en la sección de configuración",
+      "action": "Configurar API Key"
+    }
+  },
+  "provider": {
+    "select": "Seleccionar proveedor",
+    "free": "GRATIS",
+    "paid": "DE PAGO",
+    "corsOk": "CORS OK",
+    "configured": "Configurada",
+    "invalid": "Inválida",
+    "notConfigured": "No configurada",
+    "missingKey": "Falta API Key",
+    "configureKey": "Configurar API Key para {{provider}}",
+    "getKey": "Obtener API key",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "keyStored": "Tu API key se guarda localmente en tu navegador. Nunca se envía a nuestros servidores.",
+    "validationError": {
+      "invalid": "API key inválida. Verifica que sea correcta.",
+      "error": "Error al validar. Intenta de nuevo."
+    }
+  },
+  "profile": {
+    "title": "Tu Perfil de Chef",
+    "subtitle": "Personaliza las recetas según tus necesidades",
+    "age": "Edad",
+    "height": "Altura (cm)",
+    "gender": {
+      "label": "Género",
+      "male": "Masculino",
+      "female": "Femenino",
+      "nonBinary": "No Binario",
+      "preferNotToSay": "Prefiero no decir"
+    },
+    "allergies": {
+      "label": "Alergias",
+      "placeholder": "Ej: maní, mariscos, lácteos...",
+      "add": "Agregar alergia"
+    },
+    "conditions": {
+      "label": "Condiciones de Salud",
+      "diabetes": "Diabetes",
+      "hypertension": "Hipertensión",
+      "celiac": "Celiaquía"
+    },
+    "diet": {
+      "label": "Preferencia Dietética",
+      "omnivore": "Omnívoro",
+      "vegetarian": "Vegetariano",
+      "vegan": "Vegano",
+      "keto": "Keto",
+      "paleo": "Paleo",
+      "gluten-free": "Sin Gluten",
+      "any": "Sin preferencias"
+    },
+    "skillLevel": {
+      "label": "Nivel de Habilidad",
+      "novice": "Novato",
+      "home-cook": "Hogar",
+      "pro": "Profesional"
+    },
+    "dislikes": {
+      "label": "No me gusta"
+    },
+    "save": "Guardar Perfil"
+  },
+  "pantry": {
+    "title": "Mi Despensa",
+    "subtitle": "Ingredientes que siempre tienes en casa",
+    "suggestions": "Sugerencias",
+    "empty": "Tu despensa está vacía",
+    "search": "Buscar en despensa...",
+    "addPlaceholder": "Añadir ingrediente...",
+    "items": {
+      "salt": "Sal",
+      "pepper": "Pimienta",
+      "oliveOil": "Aceite de Oliva",
+      "garlic": "Ajo",
+      "onion": "Cebolla",
+      "flour": "Harina",
+      "sugar": "Azúcar",
+      "rice": "Arroz",
+      "pasta": "Pasta",
+      "eggs": "Huevos",
+      "milk": "Leche"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "theme": {
+      "label": "Tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "language": {
+      "label": "Idioma",
+      "en": "English",
+      "es": "Español"
+    },
+    "deleteData": {
+      "label": "Borrar Mis Datos",
+      "description": "Elimina todos tus datos guardados (perfil, API keys, historial)",
+      "confirm": "¿Estás seguro? Esta acción no se puede deshacer.",
+      "button": "Borrar Todo"
+    }
+  },
+  "disclaimer": {
+    "text": "Esta receta es generada por IA solo para inspiración culinaria. No es consejo médico o nutricional profesional. Verifica siempre los ingredientes para tus necesidades de salud específicas."
+  },
+  "footer": {
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "disclaimer": "Disclaimer"
+  }
+}
