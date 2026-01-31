@@ -20,7 +20,7 @@ Genera recetas personalizadas basadas en los ingredientes que tengas disponibles
 - 🌙 **Tema oscuro/claro**: Modo sistema, oscuro o claro
 - 🌍 **Multiidioma**: Español e Inglés
 - 📱 **Mobile First**: Diseñado para móvil primero
-- ⚡ **Vercel Edge Functions**: Proxy CORS ultra-rápido (1M requests/mes gratis)
+- ⚡ **Ultra-rápido**: Generación de recetas en segundos
 
 ## 🚀 Inicio Rápido
 
@@ -45,9 +45,9 @@ npm run dev
 | Proveedor | Velocidad | Free Tier | CORS |
 |-----------|-----------|-----------|------|
 | **OpenRouter** | Variable | $5 créditos + modelos :free | ✅ Nativo |
-| **Groq** | 🚀 300 tok/s | 30 RPM, 6000 TPM | ❌ Via proxy |
-| **Google AI** | Media | Ilimitado (rate limits) | ❌ Via proxy |
-| **Cerebras** | 🚀🚀 2600 tok/s | 1M tokens/día | ❌ Via proxy |
+| **Groq** | 🚀 300 tok/s | 30 RPM, 6000 TPM | ✅ Soportado |
+| **Google AI** | Media | Ilimitado (rate limits) | ✅ Soportado |
+| **Cerebras** | 🚀🚀 2600 tok/s | 1M tokens/día | ✅ Soportado |
 
 ### 💳 De Pago
 
@@ -62,7 +62,7 @@ npm run dev
 ```
 src/
 ├── app/
-│   ├── api/ai/proxy/     # Vercel Edge Function (CORS proxy)
+│   ├── api/ai/proxy/     # API Endpoints (IA Gateway)
 │   ├── layout.tsx        # Layout principal
 │   └── page.tsx          # Página principal
 ├── components/
@@ -102,11 +102,9 @@ El sistema incluye múltiples capas de defensa:
 
 No se requieren variables de entorno. Todo funciona con las API keys del usuario.
 
-### Vercel Edge Function
-
-El proxy CORS (`/api/ai/proxy`) usa Edge Runtime para:
+### Performance
+El sistema utiliza Vercel Edge Runtime para:
 - 🚀 Latencia mínima (edge servers globales)
-- 💰 1M requests/mes gratis en Hobby plan
 - 🔒 Whitelist de proveedores permitidos
 
 ## 🤝 Contribuir

@@ -596,33 +596,6 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                {/* Links */}
-                <div className="text-center text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                  <p>
-                    <Link href="/terms" className="hover:text-orange-500">
-                      {lang === 'es' ? 'Términos' : 'Terms'}
-                    </Link>
-                    {' • '}
-                    <Link href="/privacy" className="hover:text-orange-500">
-                      {lang === 'es' ? 'Privacidad' : 'Privacy'}
-                    </Link>
-                    {' • '}
-                    <Link href="/disclaimer" className="hover:text-orange-500">
-                      Disclaimer
-                    </Link>
-                  </p>
-                  <p className="flex items-center justify-center gap-1">
-                    <Github className="h-3 w-3" />
-                    <a
-                      href="https://github.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-orange-500"
-                    >
-                      Open Source
-                    </a>
-                  </p>
-                </div>
               </>
             )}
           </div>
@@ -630,12 +603,35 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-4 sm:py-6 mt-8 sm:mt-12">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 text-center">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+      <footer className="border-t border-gray-200 dark:border-gray-800 py-6 sm:py-8 mt-8 sm:mt-12 bg-white/50 dark:bg-gray-950/50">
+        <div className="max-w-6xl mx-auto px-4 text-center space-y-4">
+          <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
             Smart Cookbook © 2026 — {lang === 'es' ? 'Hecho con' : 'Made with'} 🧡 {lang === 'es' ? 'y mucha IA' : 'and lots of AI'}
           </p>
-          <p className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 mt-1">
+
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+            <Link href="/terms" className="hover:text-orange-500 transition-colors">
+              {lang === 'es' ? 'Términos' : 'Terms'}
+            </Link>
+            <Link href="/privacy" className="hover:text-orange-500 transition-colors">
+              {lang === 'es' ? 'Privacidad' : 'Privacy'}
+            </Link>
+            <Link href="/disclaimer" className="hover:text-orange-500 transition-colors">
+              Disclaimer
+            </Link>
+            <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">|</span>
+            <a
+              href="https://github.com/neiromendez/smart-cookbook"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-orange-500 transition-colors font-medium"
+            >
+              <Github className="h-3.5 w-3.5" />
+              {lang === 'es' ? 'Ver Código' : 'Open Source'}
+            </a>
+          </div>
+
+          <p className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 max-w-md mx-auto leading-relaxed">
             {lang === 'es'
               ? 'Las recetas son generadas por IA. Verifica siempre los ingredientes para tus necesidades de salud.'
               : 'Recipes are AI-generated. Always verify ingredients for your health needs.'}
