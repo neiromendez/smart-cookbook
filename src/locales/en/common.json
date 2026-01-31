@@ -1,0 +1,223 @@
+{
+  "app": {
+    "name": "Smart Cookbook",
+    "tagline": "Your AI-powered kitchen assistant"
+  },
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "history": "History",
+    "savedIdeas": "Saved Ideas",
+    "savedRecipes": "Saved Recipes"
+  },
+  "ideas": {
+    "search": "Search ideas...",
+    "noResults": "No results",
+    "clearFilters": "Clear filters",
+    "protein": {
+      "chicken": "Chicken",
+      "beef": "Beef",
+      "pork": "Pork",
+      "fish": "Fish",
+      "seafood": "Seafood",
+      "egg": "Egg",
+      "tofu": "Tofu",
+      "legumes": "Legumes",
+      "none": "Vegetarian"
+    },
+    "meal": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack",
+      "dessert": "Dessert"
+    }
+  },
+  "home": {
+    "title": "What's in your fridge?",
+    "subtitle": "Tell me what ingredients you have and I'll suggest delicious recipes",
+    "placeholder": "E.g.: chicken, rice, tomatoes, onion, garlic...",
+    "generate": "Generate Recipe",
+    "generating": "Cooking..."
+  },
+  "vibes": {
+    "title": "What type of recipe are you looking for?",
+    "protein": "High Protein",
+    "veggie": "Vegetarian",
+    "quick": "Quick (<15 min)",
+    "healthy": "Healthy"
+  },
+  "status": {
+    "idle": "Ready to cook",
+    "idleSubtext": "Enter the ingredients you have",
+    "validating": "Validating your request...",
+    "validatingSubtext": "Making sure everything is in order",
+    "connecting": "Connecting to {{provider}}...",
+    "connectingSubtext": "Establishing secure connection",
+    "streaming": "Generating recipe...",
+    "streamingSubtext": "{{tokens}} tokens generated",
+    "completed": "Recipe ready!",
+    "completedSubtext": "Generated in {{duration}} seconds",
+    "error": "Generation failed",
+    "errorSubtext": "See details below"
+  },
+  "errors": {
+    "invalidApiKey": {
+      "title": "Invalid API Key",
+      "message": "The provided API key is invalid or has been revoked."
+    },
+    "insufficientQuota": {
+      "title": "Out of Credits",
+      "message": "Your account doesn't have enough credits."
+    },
+    "paymentRequired": {
+      "title": "Payment Required",
+      "message": "You don't need to pay! Use a 100% FREE provider:"
+    },
+    "rateLimitExceeded": {
+      "title": "Too Many Requests",
+      "message": "You've exceeded the rate limit."
+    },
+    "networkError": {
+      "title": "Connection Error",
+      "message": "Could not connect to the AI provider."
+    },
+    "promptInjection": {
+      "title": "Invalid Request",
+      "message": "Your message contains disallowed patterns."
+    },
+    "retry": "Try again",
+    "retrying": "Retrying in {{seconds}}s...",
+    "cancel": "Cancel",
+    "solutions": "How to fix it:",
+    "freeAlternatives": "FREE providers available:",
+    "use": "Use",
+    "freeReasons": {
+      "cerebras": "1M tokens/day, fastest (2600 tok/s)",
+      "google": "Unlimited free, no card required",
+      "groq": "Ultra-fast (300 tok/s), no card required",
+      "huggingface": "Free serverless API, open-source models",
+      "opencode": "Free models like GPT-5 Nano and Fast One",
+      "openrouter": "$5 credits + 20+ free models"
+    },
+    "missingKey": {
+      "title": "API Key Not Configured",
+      "message": "You need to configure an API key to generate recipes.",
+      "solution1": "Select a free provider from the list below",
+      "solution2": "Configure your API key in the settings section",
+      "action": "Configure API Key"
+    }
+  },
+  "provider": {
+    "select": "Select provider",
+    "free": "FREE",
+    "paid": "PAID",
+    "corsOk": "CORS OK",
+    "configured": "Configured",
+    "invalid": "Invalid",
+    "notConfigured": "Not configured",
+    "missingKey": "API Key Missing",
+    "configureKey": "Configure API Key for {{provider}}",
+    "getKey": "Get API key",
+    "save": "Save",
+    "cancel": "Cancel",
+    "keyStored": "Your API key is stored locally in your browser. It's never sent to our servers.",
+    "validationError": {
+      "invalid": "Invalid API key. Please verify it is correct.",
+      "error": "Validation error. Please try again."
+    }
+  },
+  "profile": {
+    "title": "Your Chef Profile",
+    "subtitle": "Customize recipes to your needs",
+    "age": "Age",
+    "height": "Height (cm)",
+    "gender": {
+      "label": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "nonBinary": "Non-Binary",
+      "preferNotToSay": "Prefer not to say"
+    },
+    "allergies": {
+      "label": "Allergies",
+      "placeholder": "E.g.: peanuts, shellfish, dairy...",
+      "add": "Add allergy"
+    },
+    "conditions": {
+      "label": "Health Conditions",
+      "diabetes": "Diabetes",
+      "hypertension": "Hypertension",
+      "celiac": "Celiac Disease"
+    },
+    "diet": {
+      "label": "Dietary Preference",
+      "omnivore": "Omnivore",
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "keto": "Keto",
+      "paleo": "Paleo",
+      "gluten-free": "Gluten-Free",
+      "any": "No preferences"
+    },
+    "skillLevel": {
+      "label": "Skill Level",
+      "novice": "Novice",
+      "home-cook": "Home Cook",
+      "pro": "Professional"
+    },
+    "dislikes": {
+      "label": "Dislikes"
+    },
+    "save": "Save Profile"
+  },
+  "pantry": {
+    "title": "My Pantry",
+    "subtitle": "Ingredients you always have at home",
+    "suggestions": "Suggestions",
+    "empty": "Your pantry is empty",
+    "search": "Search in pantry...",
+    "addPlaceholder": "Add ingredient...",
+    "items": {
+      "salt": "Salt",
+      "pepper": "Pepper",
+      "oliveOil": "Olive Oil",
+      "garlic": "Garlic",
+      "onion": "Onion",
+      "flour": "Flour",
+      "sugar": "Sugar",
+      "rice": "Rice",
+      "pasta": "Pasta",
+      "eggs": "Eggs",
+      "milk": "Milk"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "es": "Español"
+    },
+    "deleteData": {
+      "label": "Delete My Data",
+      "description": "Delete all your saved data (profile, API keys, history)",
+      "confirm": "Are you sure? This action cannot be undone.",
+      "button": "Delete All"
+    }
+  },
+  "disclaimer": {
+    "text": "This recipe is AI-generated for culinary inspiration only. It is not professional medical or nutritional advice. Always verify ingredients for your specific health needs."
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "disclaimer": "Disclaimer"
+  }
+}
