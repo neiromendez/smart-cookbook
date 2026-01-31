@@ -227,7 +227,7 @@ export const AI_PROVIDERS: Record<string, AIProviderConfig> = {
       'opencode/gpt-5-nano',
     ],
     documentation: 'https://opencode.ai/docs',
-    dashboardUrl: 'https://opencode.ai/',
+    dashboardUrl: 'https://github.com/neiromendez/smart-cookbook',
     requiresCors: true,
   },
 
