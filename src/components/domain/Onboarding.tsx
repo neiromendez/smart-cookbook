@@ -327,7 +327,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     </label>
                     <Input
                       type="number"
-                      placeholder={lang === 'es' ? 'Ej: 30' : 'Ex: 30'}
+                      placeholder={t('onboarding.biometrics.agePlaceholder')}
                       value={profile.age || ''}
                       onChange={(e) => setProfile({ ...profile, age: parseInt(e.target.value) || undefined })}
                       min={1}
@@ -342,7 +342,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     </label>
                     <Input
                       type="number"
-                      placeholder={lang === 'es' ? 'Ej: 170' : 'Ex: 170'}
+                      placeholder={t('onboarding.biometrics.heightPlaceholder')}
                       value={profile.height || ''}
                       onChange={(e) => setProfile({ ...profile, height: parseInt(e.target.value) || undefined })}
                       min={50}
@@ -786,14 +786,12 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
 
                   <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
                     <p className="text-sm text-orange-700 dark:text-orange-300">
-                      <strong>💡</strong> {lang === 'es'
-                        ? 'La IA buscará sustitutos o evitará estos ingredientes en tus recetas.'
-                        : 'AI will look for substitutes or avoid these ingredients in your recipes.'}
+                      <strong>💡</strong> {t('profile.dislikes.aiNote')}
                     </p>
                   </div>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} nextLabel={lang === 'es' ? 'Finalizar' : 'Finish'} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} nextLabel={t('onboarding.complete.finish')} />
               </motion.div>
             )}
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
   Users,
@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { StorageService } from '@/lib/services/storage.service';
 import type { Recipe, Ingredient } from '@/types';
+import { ChefMode } from './chef-mode/ChefMode';
 import { cn } from '@/lib/utils/cn';
 
 interface RecipeViewProps {
@@ -42,12 +43,13 @@ interface RecipeViewProps {
  * - Compartir/Imprimir
  */
 export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language as 'es' | 'en';
 
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [activeTimer, setActiveTimer] = useState<{ label: string; seconds: number; total: number } | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isChefModeOpen, setIsChefModeOpen] = useState(false);
 
   const toggleStep = (index: number) => {
     setCompletedSteps(prev => {
@@ -141,13 +143,23 @@ export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps)
             <span>{lang === 'es' ? 'Progreso' : 'Progress'}</span>
             <span>{completedSteps.size}/{recipe.instructions.length}</span>
           </div>
-          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-white"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
+          <div className="flex gap-4 items-center">
+            <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-white"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+            <Button
+              size="sm"
+              className="bg-white text-orange-600 hover:bg-orange-50 shrink-0 font-bold"
+              onClick={() => setIsChefModeOpen(true)}
+              icon={<ChefHat className="h-4 w-4" />}
+            >
+              {t('chefMode.enter')}
+            </Button>
           </div>
         </div>
       </div>
@@ -305,6 +317,16 @@ export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps)
           lang={lang}
         />
       )}
+
+      {/* Chef Mode Modal */}
+      <AnimatePresence>
+        {isChefModeOpen && (
+          <ChefMode
+            recipe={recipe}
+            onClose={() => setIsChefModeOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </Card>
   );
 }
@@ -417,7 +439,7 @@ function TimerOverlay({ timer, onClose, onTick, lang }: TimerOverlayProps) {
         // Notificar
         if (typeof window !== 'undefined') {
           const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-          audio.play().catch(() => {});
+          audio.play().catch(() => { });
         }
       }
     }, 1000);

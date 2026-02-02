@@ -195,10 +195,10 @@
       "proDesc": "I master advanced techniques and precision"
     },
     "dislikes": {
-      "label": "I don't like or can't eat",
-      "description": "Tell us which ingredients we should avoid or find alternatives for",
+      "label": "Dislikes / Can't Eat",
       "placeholder": "Ex: cilantro, liver, olives...",
-      "add": "Add to my blacklist"
+      "add": "Add to my blacklist",
+      "aiNote": "AI will look for substitutes or avoid these ingredients in your recipes."
     },
     "save": "Save Profile"
   },
@@ -291,10 +291,10 @@
       "skip": "Skip for now"
     },
     "biometrics": {
-      "title": "Basic Information",
-      "subtitle": "Optional - to adjust portions",
       "age": "Age",
+      "agePlaceholder": "Ex: 30",
       "height": "Height (cm)",
+      "heightPlaceholder": "Ex: 170",
       "gender": "Gender"
     },
     "skills": {
@@ -322,15 +322,28 @@
       "subtitle": "How do you define yourself?"
     },
     "complete": {
-      "title": "Profile Created!",
-      "subtitle": "Your Chef ID is ready. Recipes will be personalized for you.",
       "record": "Your profile:",
-      "start": "Let's Cook!"
+      "start": "Let's Cook!",
+      "finish": "Finish"
     },
     "nav": {
       "back": "Back",
       "continue": "Continue"
     }
+  },
+  "chefMode": {
+    "enter": "Start Cooking",
+    "exit": "Exit Chef Mode",
+    "step": "Step {{current}} of {{total}}",
+    "prev": "Previous",
+    "next": "Next",
+    "finish": "Finish Recipe",
+    "wakeLock": {
+      "active": "Screen always on",
+      "error": "Could not lock screen sleep"
+    },
+    "ingredients": "Needed ingredients",
+    "noInstructions": "No instructions available"
   },
   "notFound": {
     "title": "Oops! Recipe not found",

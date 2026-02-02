@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ChefHat, Check, Filter, X, History, Lightbulb } from 'lucide-react';
+import { Sparkles, ChefHat, Check, Filter, X, History, Lightbulb, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import type { RecipeIdea, MealType, ProteinType } from '@/types';
@@ -13,6 +13,7 @@ interface RecipeIdeasListProps {
   selectedIdea: RecipeIdea | null;
   onSelectIdea: (idea: RecipeIdea | null) => void;
   onGenerateRecipe: () => void;
+  onDeleteIdea?: (id: string) => void;
   isGenerating: boolean;
   locale: 'es' | 'en';
 }
@@ -66,6 +67,7 @@ export function RecipeIdeasList({
   selectedIdea,
   onSelectIdea,
   onGenerateRecipe,
+  onDeleteIdea,
   isGenerating,
   locale,
 }: RecipeIdeasListProps) {
@@ -226,7 +228,7 @@ export function RecipeIdeasList({
                 transition={{ delay: index * 0.03 }}
                 onClick={() => onSelectIdea(isSelected ? null : idea)}
                 className={cn(
-                  "relative p-4 rounded-xl text-left transition-all duration-200",
+                  "relative p-4 rounded-xl text-left transition-all duration-200 group",
                   "border-2 hover:shadow-md",
                   isSelected
                     ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20 shadow-lg ring-2 ring-orange-500/30"
@@ -269,18 +271,32 @@ export function RecipeIdeasList({
                 </p>
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-medium rounded-full">
-                    {MEAL_EMOJIS[idea.mealType]} {MEAL_LABELS[idea.mealType][locale]}
-                  </span>
-                  {idea.vibes.slice(0, 2).map(vibe => (
-                    <span
-                      key={vibe}
-                      className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] font-medium rounded-full"
-                    >
-                      {vibe}
+                <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap gap-1">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-medium rounded-full">
+                      {MEAL_EMOJIS[idea.mealType]} {MEAL_LABELS[idea.mealType][locale]}
                     </span>
-                  ))}
+                    {idea.vibes.slice(0, 2).map(vibe => (
+                      <span
+                        key={vibe}
+                        className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] font-medium rounded-full"
+                      >
+                        {vibe}
+                      </span>
+                    ))}
+                  </div>
+                  {showSavedIdeas && onDeleteIdea && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteIdea(idea.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-red-500 rounded"
+                      title={isSpanish ? 'Eliminar idea' : 'Delete idea'}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               </motion.button>
             );

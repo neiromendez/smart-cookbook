@@ -198,6 +198,13 @@ export default function HomePage() {
     setSidebarView('settings'); // Volver a settings
   };
 
+  // Eliminar una idea guardada
+  const handleDeleteIdea = (ideaId: string) => {
+    StorageService.removeRecipeIdea(ideaId);
+    setSavedIdeas(prev => prev.filter(i => i.id !== ideaId));
+    setSavedIdeasCount(prev => prev - 1);
+  };
+
   // Loading inicial
   if (!mounted || profileLoading) {
     return (
@@ -320,6 +327,7 @@ export default function HomePage() {
               apiKeys={apiKeys}
               chefProfile={profile}
               onSwitchProvider={handleSwitchProvider}
+              onDeleteIdea={handleDeleteIdea}
               loadedRecipe={loadedRecipe}
               onRecipeLoaded={handleRecipeLoaded}
             />
@@ -349,6 +357,7 @@ export default function HomePage() {
                 filterMeal={ideasFilterMeal}
                 onFilterProtein={setIdeasFilterProtein}
                 onFilterMeal={setIdeasFilterMeal}
+                onDeleteIdea={handleDeleteIdea}
                 onClose={() => setSidebarView('settings')}
                 lang={lang}
                 t={t}
@@ -400,23 +409,67 @@ export default function HomePage() {
                         </div>
                       )}
                     </div>
+
+                    {/* Alergias */}
+                    {profile.allergies.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.allergies.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.allergies.map(a => {
+                            const key = `profile.allergies.items.${a}`;
+                            return (
+                              <span
+                                key={a}
+                                className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                              >
+                                {i18n.exists(key) ? t(key) : a}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Condiciones */}
                     {profile.conditions.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {profile.conditions.slice(0, 3).map(c => {
-                          const key = `profile.conditions.${c}`;
-                          return (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.conditions.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.conditions.map(c => {
+                            const key = `profile.conditions.${c}`;
+                            return (
+                              <span
+                                key={c}
+                                className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                              >
+                                {i18n.exists(key) ? t(key) : c}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Dislikes */}
+                    {profile.dislikes && profile.dislikes.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.dislikes.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.dislikes.map(d => (
                             <span
-                              key={c}
-                              className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                              key={d}
+                              className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded text-[10px] border border-orange-200 dark:border-orange-800"
                             >
-                              {i18n.exists(key) ? t(key) : c}
+                              {d}
                             </span>
-                          );
-                        })}
-                        {profile.conditions.length > 3 && (
-                          <span className="text-xs text-gray-500">+{profile.conditions.length - 3}</span>
-                        )}
+                          ))}
+                        </div>
                       </div>
                     )}
                   </CardContent>
@@ -727,6 +780,7 @@ export default function HomePage() {
                   filterMeal={ideasFilterMeal}
                   onFilterProtein={setIdeasFilterProtein}
                   onFilterMeal={setIdeasFilterMeal}
+                  onDeleteIdea={handleDeleteIdea}
                   onClose={closeMobileOverlay}
                   lang={lang}
                   t={t}
@@ -774,7 +828,7 @@ export default function HomePage() {
                         </Button>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-3 pt-2">
+                    <CardContent className="space-y-4 pt-4">
                       <div className="flex flex-wrap gap-2">
                         {/* Dieta */}
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 rounded-md text-xs border border-green-200 dark:border-green-800">
@@ -789,20 +843,67 @@ export default function HomePage() {
                           </div>
                         )}
                       </div>
+
+                      {/* Alergias */}
+                      {profile.allergies.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.allergies.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.allergies.map(a => {
+                              const key = `profile.allergies.items.${a}`;
+                              return (
+                                <span
+                                  key={a}
+                                  className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : a}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Condiciones */}
                       {profile.conditions.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {profile.conditions.slice(0, 3).map(c => (
-                            <span
-                              key={c}
-                              className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
-                            >
-                              {t(`profile.conditions.${c}`) !== `profile.conditions.${c}` ? t(`profile.conditions.${c}`) : c}
-                            </span>
-                          ))}
-                          {profile.conditions.length > 3 && (
-                            <span className="text-xs text-gray-500">+{profile.conditions.length - 3}</span>
-                          )}
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.conditions.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.conditions.map(c => {
+                              const key = `profile.conditions.${c}`;
+                              return (
+                                <span
+                                  key={c}
+                                  className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : c}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dislikes */}
+                      {profile.dislikes && profile.dislikes.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.dislikes.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.dislikes.map(d => (
+                              <span
+                                key={d}
+                                className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded text-[10px] border border-orange-200 dark:border-orange-800"
+                              >
+                                {d}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </CardContent>
@@ -951,6 +1052,7 @@ interface IdeasSidebarProps {
   filterMeal: MealType | null;
   onFilterProtein: (v: ProteinType | null) => void;
   onFilterMeal: (v: MealType | null) => void;
+  onDeleteIdea: (id: string) => void;
   onClose: () => void;
   lang: 'es' | 'en';
   t: (key: string) => string;
@@ -962,6 +1064,7 @@ function IdeasSidebar({
   filterMeal,
   onFilterProtein,
   onFilterMeal,
+  onDeleteIdea,
   onClose,
   lang,
   t,
@@ -1088,7 +1191,7 @@ function IdeasSidebar({
           {filteredIdeas.map((idea) => (
             <div
               key={idea.id}
-              className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-amber-300 dark:hover:border-amber-600 transition-colors cursor-pointer"
+              className="relative p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-amber-300 dark:hover:border-amber-600 transition-colors cursor-pointer group"
             >
               <div className="flex items-start gap-2">
                 <span className="text-base flex-shrink-0" title={t(`ideas.protein.${idea.proteinType}`)}>
@@ -1101,13 +1204,23 @@ function IdeasSidebar({
                   <p className="text-[10px] text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">
                     {idea.description}
                   </p>
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex items-center justify-between mt-1">
                     <span
                       className="inline-flex items-center px-1 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 text-[9px] rounded"
                       title={t(`ideas.meal.${idea.mealType}`)}
                     >
                       {MEAL_EMOJIS[idea.mealType]} {t(`ideas.meal.${idea.mealType}`)}
                     </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteIdea(idea.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-red-500 rounded"
+                      title={lang === 'es' ? 'Eliminar idea' : 'Delete idea'}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
                   </div>
                 </div>
               </div>

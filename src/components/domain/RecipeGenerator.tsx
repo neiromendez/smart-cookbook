@@ -26,6 +26,7 @@ interface RecipeGeneratorProps {
   apiKeys: AIProviderKey[];
   chefProfile?: ChefProfile;
   onSwitchProvider: (providerId: string) => void;
+  onDeleteIdea?: (id: string) => void;
   loadedRecipe?: Recipe | null; // Receta cargada desde el historial
   onRecipeLoaded?: () => void; // Callback cuando la receta se ha mostrado
 }
@@ -55,6 +56,7 @@ export function RecipeGenerator({
   apiKeys,
   chefProfile,
   onSwitchProvider,
+  onDeleteIdea,
   loadedRecipe,
   onRecipeLoaded,
 }: RecipeGeneratorProps) {
@@ -64,7 +66,13 @@ export function RecipeGenerator({
   const [ingredients, setIngredients] = useState('');
   const [selectedMealType, setSelectedMealType] = useState<string | null>(null);
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
-  const [servings, setServings] = useState(1);
+  const [servings, setServings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('smart-cookbook-servings');
+      return saved ? parseInt(saved, 10) : 2;
+    }
+    return 2;
+  });
   const [guestRestrictions, setGuestRestrictions] = useState('');
   const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
 
@@ -682,26 +690,30 @@ export function RecipeGenerator({
                   👥 {lang === 'es' ? '¿Cuántas personas?' : 'How many people?'}
                 </label>
                 <div className="flex items-center gap-3">
-                  {[1, 2, 3, 4, 6].map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setServings(num)}
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-gray-400" />
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={servings}
+                      onChange={e => {
+                        const value = Math.max(1, Math.min(50, parseInt(e.target.value) || 1));
+                        setServings(value);
+                        localStorage.setItem('smart-cookbook-servings', value.toString());
+                      }}
                       disabled={isGenerating}
                       className={cn(
-                        'w-10 h-10 rounded-lg text-sm font-bold border-2 transition-all',
-                        servings === num
-                          ? 'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300'
-                          : 'border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800'
+                        'w-16 h-10 rounded-lg text-center text-sm font-bold border-2 transition-all',
+                        'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
+                        'focus:outline-none focus:ring-2 focus:ring-orange-500/50',
+                        'disabled:opacity-50 disabled:cursor-not-allowed'
                       )}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                  <div className="ml-auto flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{servings}</span>
+                    />
                   </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {lang === 'es' ? 'personas' : 'people'}
+                  </span>
                 </div>
               </div>
 
@@ -811,6 +823,7 @@ export function RecipeGenerator({
             selectedIdea={selectedIdea}
             onSelectIdea={selectIdea}
             onGenerateRecipe={handleGenerateRecipeFromIdea}
+            onDeleteIdea={onDeleteIdea}
             isGenerating={isGeneratingRecipe}
             locale={lang}
           />

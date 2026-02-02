@@ -159,14 +159,14 @@
       "label": "Condiciones de Salud",
       "diabetes": "Diabetes",
       "hypertension": "Hipertensión",
-      "fatty-liver": "Hígado graso",
-      "high-cholesterol": "Colesterol alto",
+      "fatty-liver": "Hígado Graso",
+      "high-cholesterol": "Colesterol Alto",
       "celiac": "Celiaquía",
-      "lactose-intolerance": "Intolerancia lactosa",
+      "lactose-intolerance": "Intolerancia a la Lactosa",
       "gastritis": "Gastritis/Reflujo",
-      "kidney-disease": "Enfermedad renal",
+      "kidney-disease": "Enfermedad Renal",
       "gout": "Gota",
-      "ibs": "Colon irritable"
+      "ibs": "Colon Irritable"
     },
     "diet": {
       "label": "Preferencia Dietética",
@@ -195,10 +195,10 @@
       "proDesc": "Manejo técnicas avanzadas y precisión"
     },
     "dislikes": {
-      "label": "No me gusta o no puedo comer",
-      "description": "Dinos qué ingredientes debemos evitar o buscar alternativas",
+      "label": "No me gusta / No puedo comer",
       "placeholder": "Ej: cilantro, hígado, aceitunas...",
-      "add": "Añadir a mi lista negra"
+      "add": "Añadir a mi lista negra",
+      "aiNote": "La IA buscará sustitutos o evitará estos ingredientes en tus recetas."
     },
     "save": "Guardar Perfil"
   },
@@ -291,10 +291,10 @@
       "skip": "Omitir por ahora"
     },
     "biometrics": {
-      "title": "Información básica",
-      "subtitle": "Opcional - para ajustar porciones",
       "age": "Edad",
+      "agePlaceholder": "Ej: 30",
       "height": "Altura (cm)",
+      "heightPlaceholder": "Ej: 170",
       "gender": "Género"
     },
     "skills": {
@@ -322,15 +322,28 @@
       "subtitle": "¿Cómo te defines?"
     },
     "complete": {
-      "title": "¡Perfil Creado!",
-      "subtitle": "Tu Chef ID está listo. Las recetas se personalizarán para ti.",
       "record": "Tu perfil:",
-      "start": "¡A cocinar!"
+      "start": "¡A cocinar!",
+      "finish": "Finalizar"
     },
     "nav": {
       "back": "Atrás",
       "continue": "Continuar"
     }
+  },
+  "chefMode": {
+    "enter": "Empezar a Cocinar",
+    "exit": "Salir del Modo Chef",
+    "step": "Paso {{current}} de {{total}}",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "finish": "Finalizar Receta",
+    "wakeLock": {
+      "active": "Pantalla siempre encendida",
+      "error": "No se pudo bloquear el reposo de pantalla"
+    },
+    "ingredients": "Ingredientes necesarios",
+    "noInstructions": "No hay instrucciones disponibles"
   },
   "notFound": {
     "title": "¡Ups! Receta no encontrada",
