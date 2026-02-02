@@ -375,7 +375,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
               </motion.div>
             )}
 
@@ -427,7 +427,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   ))}
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
               </motion.div>
             )}
 
@@ -541,7 +541,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 )}
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
               </motion.div>
             )}
 
@@ -654,7 +654,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </p>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
               </motion.div>
             )}
 
@@ -715,7 +715,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   })}
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
               </motion.div>
             )}
 
@@ -793,7 +793,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} nextLabel={lang === 'es' ? 'Finalizar' : 'Finish'} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} nextLabel={lang === 'es' ? 'Finalizar' : 'Finish'} />
               </motion.div>
             )}
 
@@ -868,9 +868,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       <div className="flex items-start gap-2">
                         <span className="text-red-500">⚠️</span>
                         <span className="text-gray-600 dark:text-gray-400">
-                          {profile.allergies.map(a =>
-                            t(`profile.allergies.items.${a}`) || a
-                          ).join(', ')}
+                          {profile.allergies.map(a => {
+                            const key = `profile.allergies.items.${a}`;
+                            return i18n.exists(key) ? t(key) : a;
+                          }).join(', ')}
                         </span>
                       </div>
                     )}
@@ -880,9 +881,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       <div className="flex items-start gap-2">
                         <span className="text-pink-500">❤️</span>
                         <span className="text-gray-600 dark:text-gray-400">
-                          {profile.conditions.map(c =>
-                            t(`profile.conditions.${c}`) || c
-                          ).join(', ')}
+                          {profile.conditions.map(c => {
+                            const key = `profile.conditions.${c}`;
+                            return i18n.exists(key) ? t(key) : c;
+                          }).join(', ')}
                         </span>
                       </div>
                     )}
@@ -919,10 +921,11 @@ interface NavigationButtonsProps {
   onPrev: () => void;
   onNext: () => void;
   lang: 'es' | 'en';
+  t: any;
   nextLabel?: string;
 }
 
-function NavigationButtons({ onPrev, onNext, lang, nextLabel }: NavigationButtonsProps) {
+function NavigationButtons({ onPrev, onNext, lang, t, nextLabel }: NavigationButtonsProps) {
   return (
     <div className="flex gap-3">
       <Button variant="outline" onClick={onPrev} className="flex-1" icon={<ArrowLeft className="h-4 w-4" />}>

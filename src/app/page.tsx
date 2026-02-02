@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { ChefHat, Settings, Trash2, Github, User, History, ShoppingCart, Edit2, Lightbulb, Filter, X } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { ChefHat, Settings, Trash2, Github, User, History, ShoppingCart, Edit2, Lightbulb, Filter, X, ChevronDown, ChevronUp, Sun, Moon, Monitor } from 'lucide-react';
 import { RecipeGenerator } from '@/components/domain/RecipeGenerator';
 import { ProviderSelector } from '@/components/domain/ProviderSelector';
 import { Onboarding } from '@/components/domain/Onboarding';
@@ -36,6 +37,8 @@ export default function HomePage() {
     isLoading: profileLoading,
   } = useChefProfile();
 
+  const { theme } = useTheme();
+
   const [selectedProvider, setSelectedProvider] = useState('openrouter');
   const [apiKeys, setApiKeys] = useState<AIProviderKey[]>([]);
   const [sidebarView, setSidebarView] = useState<SidebarView>('settings');
@@ -45,6 +48,10 @@ export default function HomePage() {
   const [savedIdeasCount, setSavedIdeasCount] = useState(0);
   const [savedRecipesCount, setSavedRecipesCount] = useState(0);
   const [savedIdeas, setSavedIdeas] = useState<RecipeIdea[]>([]);
+
+  // Estados para secciones colapsables
+  const [appearanceExpanded, setAppearanceExpanded] = useState(false);
+  const [languageExpanded, setLanguageExpanded] = useState(false);
 
   // Filtros para Ideas Guardadas
   const [ideasFilterProtein, setIdeasFilterProtein] = useState<ProteinType | null>(null);
@@ -236,8 +243,6 @@ export default function HomePage() {
 
             {/* Controles */}
             <div className="flex items-center gap-1 sm:gap-2">
-              <LanguageSwitcher />
-              <ThemeToggle />
               {/* Ideas Guardadas - solo visible si hay ideas */}
               {savedIdeasCount > 0 && (
                 <Button
@@ -405,7 +410,7 @@ export default function HomePage() {
                               key={c}
                               className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
                             >
-                              {t(key) !== key ? t(key) : c}
+                              {i18n.exists(key) ? t(key) : c}
                             </span>
                           );
                         })}
@@ -442,6 +447,57 @@ export default function HomePage() {
                     />
                   </CardContent>
                 </Card>
+
+                {/* Apariencia e Idioma */}
+                <div className="grid grid-cols-1 gap-4">
+                  <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                    <button
+                      onClick={() => setAppearanceExpanded(!appearanceExpanded)}
+                      className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                          {lang === 'es' ? 'Apariencia' : 'Appearance'}
+                        </span>
+                        {!appearanceExpanded && (
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-500">
+                            {theme === 'light' ? <Sun className="h-4 w-4" /> : theme === 'dark' ? <Moon className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+                          </div>
+                        )}
+                      </div>
+                      {appearanceExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                    </button>
+                    {appearanceExpanded && (
+                      <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                        <ThemeToggle variant="list" className="py-2" />
+                      </CardContent>
+                    )}
+                  </Card>
+
+                  <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                    <button
+                      onClick={() => setLanguageExpanded(!languageExpanded)}
+                      className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                          {lang === 'es' ? 'Idioma' : 'Language'}
+                        </span>
+                        {!languageExpanded && (
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-xl leading-none">
+                            {lang === 'es' ? '🇪🇸' : '🇺🇸'}
+                          </div>
+                        )}
+                      </div>
+                      {languageExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                    </button>
+                    {languageExpanded && (
+                      <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                        <LanguageSwitcher variant="list" className="py-2" />
+                      </CardContent>
+                    )}
+                  </Card>
+                </div>
 
                 {/* Borrar datos y privacidad */}
                 <Card>
@@ -511,14 +567,17 @@ export default function HomePage() {
                             {t('profile.allergies.label')}
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {profile.allergies.map(a => (
-                              <span
-                                key={a}
-                                className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
-                              >
-                                {a}
-                              </span>
-                            ))}
+                            {profile.allergies.map(a => {
+                              const key = `profile.allergies.items.${a}`;
+                              return (
+                                <span
+                                  key={a}
+                                  className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : a}
+                                </span>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -531,16 +590,13 @@ export default function HomePage() {
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {profile.conditions.map(c => {
-                              const translationKey = `profile.conditions.${c}`;
-                              const translated = t(translationKey);
-                              const label = translated === translationKey ? c : translated;
-
+                              const key = `profile.conditions.${c}`;
                               return (
                                 <span
                                   key={c}
                                   className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
                                 >
-                                  {label}
+                                  {i18n.exists(key) ? t(key) : c}
                                 </span>
                               );
                             })}
@@ -699,6 +755,7 @@ export default function HomePage() {
                     </Button>
                   </div>
 
+
                   {/* Perfil del Chef */}
                   <Card>
                     <CardHeader className="pb-2">
@@ -795,6 +852,57 @@ export default function HomePage() {
                       </Button>
                     </CardContent>
                   </Card>
+
+                  {/* Apariencia e Idioma */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                      <button
+                        onClick={() => setAppearanceExpanded(!appearanceExpanded)}
+                        className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                            {lang === 'es' ? 'Apariencia' : 'Appearance'}
+                          </span>
+                          {!appearanceExpanded && (
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-500">
+                              {theme === 'light' ? <Sun className="h-4 w-4" /> : theme === 'dark' ? <Moon className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+                            </div>
+                          )}
+                        </div>
+                        {appearanceExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                      </button>
+                      {appearanceExpanded && (
+                        <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                          <ThemeToggle variant="list" className="py-2" />
+                        </CardContent>
+                      )}
+                    </Card>
+
+                    <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                      <button
+                        onClick={() => setLanguageExpanded(!languageExpanded)}
+                        className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                            {lang === 'es' ? 'Idioma' : 'Language'}
+                          </span>
+                          {!languageExpanded && (
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-xl leading-none">
+                              {lang === 'es' ? '🇪🇸' : '🇺🇸'}
+                            </div>
+                          )}
+                        </div>
+                        {languageExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                      </button>
+                      {languageExpanded && (
+                        <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                          <LanguageSwitcher variant="list" className="py-2" />
+                        </CardContent>
+                      )}
+                    </Card>
+                  </div>
                 </div>
               )}
             </div>

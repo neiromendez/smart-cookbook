@@ -420,25 +420,36 @@ export function RecipeGenerator({
         // Limpiar el prefijo de lista
         let cleaned = trimmed.replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '').trim();
 
-        // Extraer cantidad si está entre paréntesis al final
-        const amountMatch = cleaned.match(/\(([^)]+)\)\s*$/);
+        // 1. Extraer cantidad si está entre paréntesis al final "(500g)"
+        const parenMatch = cleaned.match(/\(([^)]+)\)\s*$/);
         let amount = '';
         let name = cleaned;
 
-        if (amountMatch) {
-          amount = amountMatch[1];
+        if (parenMatch) {
+          amount = parenMatch[1];
           name = cleaned.replace(/\([^)]+\)\s*$/, '').trim();
         }
-
-        // También buscar cantidades al inicio (ej: "200g pollo")
-        const prefixAmountMatch = name.match(/^(\d+\s*(?:g|kg|ml|l|oz|lb|cups?|tbsp|tsp|pcs?|unidades?|piezas?)?)\s+(.+)/i);
-        if (prefixAmountMatch && !amount) {
-          amount = prefixAmountMatch[1];
-          name = prefixAmountMatch[2];
+        // 2. Extraer cantidad si está al inicio separada por ":" (ej: "250g: Pollo")
+        else if (cleaned.includes(':')) {
+          const parts = cleaned.split(':');
+          amount = parts[0].trim();
+          name = parts.slice(1).join(':').trim();
+        }
+        // 3. Extraer cantidad si empieza con números (ej: "500g de pollo", "2 huevos")
+        else {
+          const quantityMatch = cleaned.match(/^(\d+(?:[\d./\s]*(?:g|gr|gramos|kg|kilos?|ml|l|litros?|oz|onzas?|lb|libras?|cups?|tazas?|tbsp|cda|cucharadas?|tsp|cdta|items?|units?|unidades?|piezas?|ramitos?))?)\s+(?:de\s+)?(.+)/i);
+          if (quantityMatch) {
+            amount = quantityMatch[1].trim();
+            name = quantityMatch[2].trim();
+          }
         }
 
         if (name) {
-          ingredients.push({ name, amount, recipeTitle: recipeTitle || undefined });
+          ingredients.push({
+            name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(),
+            amount,
+            recipeTitle: recipeTitle || undefined
+          });
         }
       }
     }
@@ -784,7 +795,7 @@ export function RecipeGenerator({
         {ideasStatus.state === 'error' && (
           <ErrorCard
             error={ideasStatus.error}
-            onRetry={() => handleGenerateIdeas({ preventDefault: () => {} } as React.FormEvent)}
+            onRetry={() => handleGenerateIdeas({ preventDefault: () => { } } as React.FormEvent)}
             onSwitchProvider={handleSwitchProvider}
             provider={selectedProvider}
           />

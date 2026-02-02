@@ -202,6 +202,31 @@
     },
     "save": "Save Profile"
   },
+  "shoppingList": {
+    "title": "Shopping List",
+    "views": {
+      "recipe": "By Recipe",
+      "consolidated": "Consolidated"
+    },
+    "stats": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "recipes": "Recipes",
+      "purchased": "Purchased"
+    },
+    "actions": {
+      "add": "Add Item",
+      "clearChecked": "Clear Checked",
+      "clearAll": "Clear All",
+      "share": "Share",
+      "copy": "Copy"
+    },
+    "empty": {
+      "title": "Your list is empty",
+      "subtitle": "Add ingredients manually or generate a recipe"
+    },
+    "consolidatedInfo": "Ingredients have been automatically summed to make your shopping easier."
+  },
   "pantry": {
     "title": "My Pantry",
     "subtitle": "Ingredients you always have at home",

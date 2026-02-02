@@ -202,6 +202,31 @@
     },
     "save": "Guardar Perfil"
   },
+  "shoppingList": {
+    "title": "Lista de Compras",
+    "views": {
+      "recipe": "Por Receta",
+      "consolidated": "Consolidado"
+    },
+    "stats": {
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "recipes": "Recetas",
+      "purchased": "Comprados"
+    },
+    "actions": {
+      "add": "Añadir Item",
+      "clearChecked": "Limpiar Marcados",
+      "clearAll": "Borrar Todo",
+      "share": "Compartir",
+      "copy": "Copiar"
+    },
+    "empty": {
+      "title": "Tu lista está vacía",
+      "subtitle": "Añade ingredientes manualmente o genera una receta"
+    },
+    "consolidatedInfo": "Los ingredientes se han sumado automáticamente para facilitar tu compra."
+  },
   "pantry": {
     "title": "Mi Despensa",
     "subtitle": "Ingredientes que siempre tienes en casa",
