@@ -136,40 +136,96 @@
       "label": "Género",
       "male": "Masculino",
       "female": "Femenino",
-      "nonBinary": "No Binario",
-      "preferNotToSay": "Prefiero no decir"
+      "non-binary": "No binario",
+      "prefer-not-to-say": "Prefiero no decir"
     },
     "allergies": {
       "label": "Alergias",
       "placeholder": "Ej: maní, mariscos, lácteos...",
-      "add": "Agregar alergia"
+      "add": "Agregar alergia",
+      "items": {
+        "peanuts": "Maní/Cacahuetes",
+        "tree-nuts": "Frutos secos",
+        "milk": "Lácteos",
+        "eggs": "Huevos",
+        "wheat": "Trigo/Gluten",
+        "soy": "Soja",
+        "fish": "Pescado",
+        "shellfish": "Mariscos",
+        "sesame": "Sésamo"
+      }
     },
     "conditions": {
       "label": "Condiciones de Salud",
       "diabetes": "Diabetes",
       "hypertension": "Hipertensión",
-      "celiac": "Celiaquía"
+      "fatty-liver": "Hígado Graso",
+      "high-cholesterol": "Colesterol Alto",
+      "celiac": "Celiaquía",
+      "lactose-intolerance": "Intolerancia a la Lactosa",
+      "gastritis": "Gastritis/Reflujo",
+      "kidney-disease": "Enfermedad Renal",
+      "gout": "Gota",
+      "ibs": "Colon Irritable"
     },
     "diet": {
       "label": "Preferencia Dietética",
+      "any": "Sin preferencias",
+      "anyDesc": "Como de todo (carnes y vegetales)",
       "omnivore": "Omnívoro",
+      "omnivoreDesc": "Dieta equilibrada estándar",
       "vegetarian": "Vegetariano",
+      "vegetarianDesc": "Sin carne ni pescado",
       "vegan": "Vegano",
+      "veganDesc": "Sin productos animales",
       "keto": "Keto",
+      "ketoDesc": "Bajo en carbohidratos",
       "paleo": "Paleo",
+      "paleoDesc": "Alimentos no procesados",
       "gluten-free": "Sin Gluten",
-      "any": "Sin preferencias"
+      "gluten-freeDesc": "Evito el gluten"
     },
     "skillLevel": {
       "label": "Nivel de Habilidad",
       "novice": "Novato",
+      "noviceDesc": "Estoy aprendiendo lo básico",
       "home-cook": "Hogar",
-      "pro": "Profesional"
+      "home-cookDesc": "Cocino regularmente para mi familia",
+      "pro": "Profesional",
+      "proDesc": "Manejo técnicas avanzadas y precisión"
     },
     "dislikes": {
-      "label": "No me gusta"
+      "label": "No me gusta / No puedo comer",
+      "placeholder": "Ej: cilantro, hígado, aceitunas...",
+      "add": "Añadir a mi lista negra",
+      "aiNote": "La IA buscará sustitutos o evitará estos ingredientes en tus recetas."
     },
     "save": "Guardar Perfil"
+  },
+  "shoppingList": {
+    "title": "Lista de Compras",
+    "views": {
+      "recipe": "Por Receta",
+      "consolidated": "Consolidado"
+    },
+    "stats": {
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "recipes": "Recetas",
+      "purchased": "Comprados"
+    },
+    "actions": {
+      "add": "Añadir Item",
+      "clearChecked": "Limpiar Marcados",
+      "clearAll": "Borrar Todo",
+      "share": "Compartir",
+      "copy": "Copiar"
+    },
+    "empty": {
+      "title": "Tu lista está vacía",
+      "subtitle": "Añade ingredientes manualmente o genera una receta"
+    },
+    "consolidatedInfo": "Los ingredientes se han sumado automáticamente para facilitar tu compra."
   },
   "pantry": {
     "title": "Mi Despensa",
@@ -219,6 +275,75 @@
     "privacy": "Privacidad",
     "terms": "Términos",
     "disclaimer": "Disclaimer"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "¡Bienvenido a Smart Cookbook!",
+      "subtitle": "Vamos a crear tu perfil de Chef para personalizar las recetas a tus necesidades.",
+      "important": "Importante",
+      "privacy": "Toda la información se guarda SOLO en tu navegador. Nunca se comparte con nadie.",
+      "nameLabel": "¿Cómo te llamas?",
+      "namePlaceholder": "Ej: Ferran Adrià",
+      "locationLabel": "¿Dónde te encuentras?",
+      "locationPlaceholder": "Ej: Bogotá, Colombia",
+      "locationSubtext": "Ayuda a sugerir ingredientes locales y ajustar cocción.",
+      "start": "Comenzar",
+      "skip": "Omitir por ahora"
+    },
+    "biometrics": {
+      "age": "Edad",
+      "agePlaceholder": "Ej: 30",
+      "height": "Altura (cm)",
+      "heightPlaceholder": "Ej: 170",
+      "gender": "Género"
+    },
+    "skills": {
+      "title": "Tu Nivel de Cocina",
+      "subtitle": "Esto ajusta la terminología y complejidad de las recetas."
+    },
+    "allergies": {
+      "title": "🛡️ Escudo de Salud: Alergias",
+      "subtitle": "Selecciona tus alergias alimentarias (si tienes)",
+      "otherLabel": "Otro (indica si tienes otra alergia):",
+      "otherPlaceholder": "Ej: Fresas, Canela...",
+      "add": "Añadir",
+      "warning": "La IA evitará estos {{count}} alérgenos en las recetas."
+    },
+    "conditions": {
+      "title": "⚕️ Condiciones de Salud",
+      "subtitle": "Selecciona condiciones que debamos considerar",
+      "otherLabel": "Otro (indica si tienes otra condición):",
+      "otherPlaceholder": "Ej: Hipotiroidismo, Anemia...",
+      "add": "Añadir",
+      "note": "Esta información ayuda a personalizar recetas, pero NO es consejo médico. Consulta siempre a un profesional."
+    },
+    "diet": {
+      "title": "🥗 Preferencia Dietética",
+      "subtitle": "¿Cómo te defines?"
+    },
+    "complete": {
+      "record": "Tu perfil:",
+      "start": "¡A cocinar!",
+      "finish": "Finalizar"
+    },
+    "nav": {
+      "back": "Atrás",
+      "continue": "Continuar"
+    }
+  },
+  "chefMode": {
+    "enter": "Empezar a Cocinar",
+    "exit": "Salir del Modo Chef",
+    "step": "Paso {{current}} de {{total}}",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "finish": "Finalizar Receta",
+    "wakeLock": {
+      "active": "Pantalla siempre encendida",
+      "error": "No se pudo bloquear el reposo de pantalla"
+    },
+    "ingredients": "Ingredientes necesarios",
+    "noInstructions": "No hay instrucciones disponibles"
   },
   "notFound": {
     "title": "¡Ups! Receta no encontrada",

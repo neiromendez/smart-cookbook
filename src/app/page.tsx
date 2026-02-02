@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { ChefHat, Settings, Trash2, Github, User, History, ShoppingCart, Edit2, Lightbulb, Filter, X } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { ChefHat, Settings, Trash2, Github, User, History, ShoppingCart, Edit2, Lightbulb, Filter, X, ChevronDown, ChevronUp, Sun, Moon, Monitor } from 'lucide-react';
 import { RecipeGenerator } from '@/components/domain/RecipeGenerator';
 import { ProviderSelector } from '@/components/domain/ProviderSelector';
 import { Onboarding } from '@/components/domain/Onboarding';
@@ -36,6 +37,8 @@ export default function HomePage() {
     isLoading: profileLoading,
   } = useChefProfile();
 
+  const { theme } = useTheme();
+
   const [selectedProvider, setSelectedProvider] = useState('openrouter');
   const [apiKeys, setApiKeys] = useState<AIProviderKey[]>([]);
   const [sidebarView, setSidebarView] = useState<SidebarView>('settings');
@@ -45,6 +48,10 @@ export default function HomePage() {
   const [savedIdeasCount, setSavedIdeasCount] = useState(0);
   const [savedRecipesCount, setSavedRecipesCount] = useState(0);
   const [savedIdeas, setSavedIdeas] = useState<RecipeIdea[]>([]);
+
+  // Estados para secciones colapsables
+  const [appearanceExpanded, setAppearanceExpanded] = useState(false);
+  const [languageExpanded, setLanguageExpanded] = useState(false);
 
   // Filtros para Ideas Guardadas
   const [ideasFilterProtein, setIdeasFilterProtein] = useState<ProteinType | null>(null);
@@ -191,6 +198,13 @@ export default function HomePage() {
     setSidebarView('settings'); // Volver a settings
   };
 
+  // Eliminar una idea guardada
+  const handleDeleteIdea = (ideaId: string) => {
+    StorageService.removeRecipeIdea(ideaId);
+    setSavedIdeas(prev => prev.filter(i => i.id !== ideaId));
+    setSavedIdeasCount(prev => prev - 1);
+  };
+
   // Loading inicial
   if (!mounted || profileLoading) {
     return (
@@ -236,8 +250,6 @@ export default function HomePage() {
 
             {/* Controles */}
             <div className="flex items-center gap-1 sm:gap-2">
-              <LanguageSwitcher />
-              <ThemeToggle />
               {/* Ideas Guardadas - solo visible si hay ideas */}
               {savedIdeasCount > 0 && (
                 <Button
@@ -315,6 +327,7 @@ export default function HomePage() {
               apiKeys={apiKeys}
               chefProfile={profile}
               onSwitchProvider={handleSwitchProvider}
+              onDeleteIdea={handleDeleteIdea}
               loadedRecipe={loadedRecipe}
               onRecipeLoaded={handleRecipeLoaded}
             />
@@ -344,6 +357,7 @@ export default function HomePage() {
                 filterMeal={ideasFilterMeal}
                 onFilterProtein={setIdeasFilterProtein}
                 onFilterMeal={setIdeasFilterMeal}
+                onDeleteIdea={handleDeleteIdea}
                 onClose={() => setSidebarView('settings')}
                 lang={lang}
                 t={t}
@@ -395,23 +409,67 @@ export default function HomePage() {
                         </div>
                       )}
                     </div>
+
+                    {/* Alergias */}
+                    {profile.allergies.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.allergies.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.allergies.map(a => {
+                            const key = `profile.allergies.items.${a}`;
+                            return (
+                              <span
+                                key={a}
+                                className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                              >
+                                {i18n.exists(key) ? t(key) : a}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Condiciones */}
                     {profile.conditions.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {profile.conditions.slice(0, 3).map(c => {
-                          const key = `profile.conditions.${c}`;
-                          return (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.conditions.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.conditions.map(c => {
+                            const key = `profile.conditions.${c}`;
+                            return (
+                              <span
+                                key={c}
+                                className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                              >
+                                {i18n.exists(key) ? t(key) : c}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Dislikes */}
+                    {profile.dislikes && profile.dislikes.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                          {t('profile.dislikes.label')}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {profile.dislikes.map(d => (
                             <span
-                              key={c}
-                              className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                              key={d}
+                              className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded text-[10px] border border-orange-200 dark:border-orange-800"
                             >
-                              {t(key) !== key ? t(key) : c}
+                              {d}
                             </span>
-                          );
-                        })}
-                        {profile.conditions.length > 3 && (
-                          <span className="text-xs text-gray-500">+{profile.conditions.length - 3}</span>
-                        )}
+                          ))}
+                        </div>
                       </div>
                     )}
                   </CardContent>
@@ -442,6 +500,57 @@ export default function HomePage() {
                     />
                   </CardContent>
                 </Card>
+
+                {/* Apariencia e Idioma */}
+                <div className="grid grid-cols-1 gap-4">
+                  <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                    <button
+                      onClick={() => setAppearanceExpanded(!appearanceExpanded)}
+                      className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                          {lang === 'es' ? 'Apariencia' : 'Appearance'}
+                        </span>
+                        {!appearanceExpanded && (
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-500">
+                            {theme === 'light' ? <Sun className="h-4 w-4" /> : theme === 'dark' ? <Moon className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+                          </div>
+                        )}
+                      </div>
+                      {appearanceExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                    </button>
+                    {appearanceExpanded && (
+                      <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                        <ThemeToggle variant="list" className="py-2" />
+                      </CardContent>
+                    )}
+                  </Card>
+
+                  <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                    <button
+                      onClick={() => setLanguageExpanded(!languageExpanded)}
+                      className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                          {lang === 'es' ? 'Idioma' : 'Language'}
+                        </span>
+                        {!languageExpanded && (
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-xl leading-none">
+                            {lang === 'es' ? '🇪🇸' : '🇺🇸'}
+                          </div>
+                        )}
+                      </div>
+                      {languageExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                    </button>
+                    {languageExpanded && (
+                      <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                        <LanguageSwitcher variant="list" className="py-2" />
+                      </CardContent>
+                    )}
+                  </Card>
+                </div>
 
                 {/* Borrar datos y privacidad */}
                 <Card>
@@ -511,14 +620,17 @@ export default function HomePage() {
                             {t('profile.allergies.label')}
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {profile.allergies.map(a => (
-                              <span
-                                key={a}
-                                className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
-                              >
-                                {a}
-                              </span>
-                            ))}
+                            {profile.allergies.map(a => {
+                              const key = `profile.allergies.items.${a}`;
+                              return (
+                                <span
+                                  key={a}
+                                  className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : a}
+                                </span>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -531,16 +643,13 @@ export default function HomePage() {
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {profile.conditions.map(c => {
-                              const translationKey = `profile.conditions.${c}`;
-                              const translated = t(translationKey);
-                              const label = translated === translationKey ? c : translated;
-
+                              const key = `profile.conditions.${c}`;
                               return (
                                 <span
                                   key={c}
                                   className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
                                 >
-                                  {label}
+                                  {i18n.exists(key) ? t(key) : c}
                                 </span>
                               );
                             })}
@@ -671,6 +780,7 @@ export default function HomePage() {
                   filterMeal={ideasFilterMeal}
                   onFilterProtein={setIdeasFilterProtein}
                   onFilterMeal={setIdeasFilterMeal}
+                  onDeleteIdea={handleDeleteIdea}
                   onClose={closeMobileOverlay}
                   lang={lang}
                   t={t}
@@ -699,6 +809,7 @@ export default function HomePage() {
                     </Button>
                   </div>
 
+
                   {/* Perfil del Chef */}
                   <Card>
                     <CardHeader className="pb-2">
@@ -717,7 +828,7 @@ export default function HomePage() {
                         </Button>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-3 pt-2">
+                    <CardContent className="space-y-4 pt-4">
                       <div className="flex flex-wrap gap-2">
                         {/* Dieta */}
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 rounded-md text-xs border border-green-200 dark:border-green-800">
@@ -732,20 +843,67 @@ export default function HomePage() {
                           </div>
                         )}
                       </div>
+
+                      {/* Alergias */}
+                      {profile.allergies.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.allergies.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.allergies.map(a => {
+                              const key = `profile.allergies.items.${a}`;
+                              return (
+                                <span
+                                  key={a}
+                                  className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-[10px] border border-red-200 dark:border-red-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : a}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Condiciones */}
                       {profile.conditions.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {profile.conditions.slice(0, 3).map(c => (
-                            <span
-                              key={c}
-                              className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
-                            >
-                              {t(`profile.conditions.${c}`) !== `profile.conditions.${c}` ? t(`profile.conditions.${c}`) : c}
-                            </span>
-                          ))}
-                          {profile.conditions.length > 3 && (
-                            <span className="text-xs text-gray-500">+{profile.conditions.length - 3}</span>
-                          )}
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.conditions.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.conditions.map(c => {
+                              const key = `profile.conditions.${c}`;
+                              return (
+                                <span
+                                  key={c}
+                                  className="px-2 py-0.5 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded text-[10px] border border-pink-200 dark:border-pink-800"
+                                >
+                                  {i18n.exists(key) ? t(key) : c}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dislikes */}
+                      {profile.dislikes && profile.dislikes.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                            {t('profile.dislikes.label')}
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {profile.dislikes.map(d => (
+                              <span
+                                key={d}
+                                className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded text-[10px] border border-orange-200 dark:border-orange-800"
+                              >
+                                {d}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </CardContent>
@@ -795,6 +953,57 @@ export default function HomePage() {
                       </Button>
                     </CardContent>
                   </Card>
+
+                  {/* Apariencia e Idioma */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                      <button
+                        onClick={() => setAppearanceExpanded(!appearanceExpanded)}
+                        className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                            {lang === 'es' ? 'Apariencia' : 'Appearance'}
+                          </span>
+                          {!appearanceExpanded && (
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-500">
+                              {theme === 'light' ? <Sun className="h-4 w-4" /> : theme === 'dark' ? <Moon className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+                            </div>
+                          )}
+                        </div>
+                        {appearanceExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                      </button>
+                      {appearanceExpanded && (
+                        <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                          <ThemeToggle variant="list" className="py-2" />
+                        </CardContent>
+                      )}
+                    </Card>
+
+                    <Card className="overflow-hidden border-orange-100 dark:border-orange-950/20">
+                      <button
+                        onClick={() => setLanguageExpanded(!languageExpanded)}
+                        className="w-full flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold uppercase text-gray-400 tracking-wider">
+                            {lang === 'es' ? 'Idioma' : 'Language'}
+                          </span>
+                          {!languageExpanded && (
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-xl leading-none">
+                              {lang === 'es' ? '🇪🇸' : '🇺🇸'}
+                            </div>
+                          )}
+                        </div>
+                        {languageExpanded ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                      </button>
+                      {languageExpanded && (
+                        <CardContent className="pt-0 border-t border-gray-100 dark:border-gray-800">
+                          <LanguageSwitcher variant="list" className="py-2" />
+                        </CardContent>
+                      )}
+                    </Card>
+                  </div>
                 </div>
               )}
             </div>
@@ -843,6 +1052,7 @@ interface IdeasSidebarProps {
   filterMeal: MealType | null;
   onFilterProtein: (v: ProteinType | null) => void;
   onFilterMeal: (v: MealType | null) => void;
+  onDeleteIdea: (id: string) => void;
   onClose: () => void;
   lang: 'es' | 'en';
   t: (key: string) => string;
@@ -854,6 +1064,7 @@ function IdeasSidebar({
   filterMeal,
   onFilterProtein,
   onFilterMeal,
+  onDeleteIdea,
   onClose,
   lang,
   t,
@@ -980,7 +1191,7 @@ function IdeasSidebar({
           {filteredIdeas.map((idea) => (
             <div
               key={idea.id}
-              className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-amber-300 dark:hover:border-amber-600 transition-colors cursor-pointer"
+              className="relative p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-amber-300 dark:hover:border-amber-600 transition-colors cursor-pointer group"
             >
               <div className="flex items-start gap-2">
                 <span className="text-base flex-shrink-0" title={t(`ideas.protein.${idea.proteinType}`)}>
@@ -993,13 +1204,23 @@ function IdeasSidebar({
                   <p className="text-[10px] text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">
                     {idea.description}
                   </p>
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex items-center justify-between mt-1">
                     <span
                       className="inline-flex items-center px-1 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 text-[9px] rounded"
                       title={t(`ideas.meal.${idea.mealType}`)}
                     >
                       {MEAL_EMOJIS[idea.mealType]} {t(`ideas.meal.${idea.mealType}`)}
                     </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteIdea(idea.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-red-500 rounded"
+                      title={lang === 'es' ? 'Eliminar idea' : 'Delete idea'}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
                   </div>
                 </div>
               </div>

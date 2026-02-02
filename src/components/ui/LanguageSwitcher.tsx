@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils/cn';
 
 interface LanguageSwitcherProps {
   className?: string;
+  variant?: 'dropdown' | 'list';
 }
 
 const LANGUAGES = [
@@ -16,10 +17,10 @@ const LANGUAGES = [
 ];
 
 /**
- * LanguageSwitcher - Selector de idioma con dropdown
- * Muestra bandera + codigo del idioma actual, al hacer clic abre menu
+ * LanguageSwitcher - Selector de idioma con dropdown o lista
+ * Muestra bandera + codigo del idioma actual
  */
-export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ className, variant = 'dropdown' }: LanguageSwitcherProps) {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -28,6 +29,8 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
 
   // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
+    if (variant !== 'dropdown') return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -36,13 +39,43 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [variant]);
 
   const handleSelect = (langCode: string) => {
     i18n.changeLanguage(langCode);
     StorageService.setPreferences({ locale: langCode as 'en' | 'es' });
     setIsOpen(false);
   };
+
+  if (variant === 'list') {
+    return (
+      <div className={cn('space-y-1', className)}>
+        {LANGUAGES.map(lang => {
+          const isSelected = lang.code === currentLang.code;
+          return (
+            <button
+              key={lang.code}
+              onClick={() => handleSelect(lang.code)}
+              className={cn(
+                'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors',
+                isSelected
+                  ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-medium'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{lang.flag}</span>
+                <span>{lang.name}</span>
+              </div>
+              {isSelected && (
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div ref={dropdownRef} className={cn('relative', className)}>

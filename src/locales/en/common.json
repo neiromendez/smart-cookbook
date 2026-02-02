@@ -136,40 +136,96 @@
       "label": "Gender",
       "male": "Male",
       "female": "Female",
-      "nonBinary": "Non-Binary",
-      "preferNotToSay": "Prefer not to say"
+      "non-binary": "Non-Binary",
+      "prefer-not-to-say": "Prefer not to say"
     },
     "allergies": {
       "label": "Allergies",
       "placeholder": "E.g.: peanuts, shellfish, dairy...",
-      "add": "Add allergy"
+      "add": "Add allergy",
+      "items": {
+        "peanuts": "Peanuts",
+        "tree-nuts": "Tree Nuts",
+        "milk": "Dairy/Milk",
+        "eggs": "Eggs",
+        "wheat": "Wheat/Gluten",
+        "soy": "Soy",
+        "fish": "Fish",
+        "shellfish": "Shellfish",
+        "sesame": "Sesame"
+      }
     },
     "conditions": {
       "label": "Health Conditions",
       "diabetes": "Diabetes",
       "hypertension": "Hypertension",
-      "celiac": "Celiac Disease"
+      "fatty-liver": "Fatty Liver",
+      "high-cholesterol": "High Cholesterol",
+      "celiac": "Celiac Disease",
+      "lactose-intolerance": "Lactose Intolerance",
+      "gastritis": "Gastritis/Reflux",
+      "kidney-disease": "Kidney Disease",
+      "gout": "Gout",
+      "ibs": "IBS"
     },
     "diet": {
       "label": "Dietary Preference",
+      "any": "No preferences",
+      "anyDesc": "I eat everything (meat and vegetables)",
       "omnivore": "Omnivore",
+      "omnivoreDesc": "Standard balanced diet",
       "vegetarian": "Vegetarian",
+      "vegetarianDesc": "No meat or fish",
       "vegan": "Vegan",
+      "veganDesc": "No animal products",
       "keto": "Keto",
+      "ketoDesc": "Low carb, high fat",
       "paleo": "Paleo",
+      "paleoDesc": "Whole foods only",
       "gluten-free": "Gluten-Free",
-      "any": "No preferences"
+      "gluten-freeDesc": "No gluten"
     },
     "skillLevel": {
       "label": "Skill Level",
       "novice": "Novice",
+      "noviceDesc": "I am learning the basics",
       "home-cook": "Home Cook",
-      "pro": "Professional"
+      "home-cookDesc": "I cook regularly for my family",
+      "pro": "Professional",
+      "proDesc": "I master advanced techniques and precision"
     },
     "dislikes": {
-      "label": "Dislikes"
+      "label": "Dislikes / Can't Eat",
+      "placeholder": "Ex: cilantro, liver, olives...",
+      "add": "Add to my blacklist",
+      "aiNote": "AI will look for substitutes or avoid these ingredients in your recipes."
     },
     "save": "Save Profile"
+  },
+  "shoppingList": {
+    "title": "Shopping List",
+    "views": {
+      "recipe": "By Recipe",
+      "consolidated": "Consolidated"
+    },
+    "stats": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "recipes": "Recipes",
+      "purchased": "Purchased"
+    },
+    "actions": {
+      "add": "Add Item",
+      "clearChecked": "Clear Checked",
+      "clearAll": "Clear All",
+      "share": "Share",
+      "copy": "Copy"
+    },
+    "empty": {
+      "title": "Your list is empty",
+      "subtitle": "Add ingredients manually or generate a recipe"
+    },
+    "consolidatedInfo": "Ingredients have been automatically summed to make your shopping easier."
   },
   "pantry": {
     "title": "My Pantry",
@@ -219,6 +275,75 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "disclaimer": "Disclaimer"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Smart Cookbook!",
+      "subtitle": "Let's create your Chef profile to personalize recipes to your needs.",
+      "important": "Important",
+      "privacy": "All information is stored ONLY in your browser. It is never shared with anyone.",
+      "nameLabel": "What is your name?",
+      "namePlaceholder": "Ex: Gordon Ramsay",
+      "locationLabel": "Where are you located?",
+      "locationPlaceholder": "Ex: Paris, France",
+      "locationSubtext": "Helps suggesting local ingredients and adjusting cooking.",
+      "start": "Get Started",
+      "skip": "Skip for now"
+    },
+    "biometrics": {
+      "age": "Age",
+      "agePlaceholder": "Ex: 30",
+      "height": "Height (cm)",
+      "heightPlaceholder": "Ex: 170",
+      "gender": "Gender"
+    },
+    "skills": {
+      "title": "Your Cooking Skill",
+      "subtitle": "This adjusts recipe terminology and complexity."
+    },
+    "allergies": {
+      "title": "🛡️ Health Shield: Allergies",
+      "subtitle": "Select your food allergies (if any)",
+      "otherLabel": "Other (specify if you have another allergy):",
+      "otherPlaceholder": "Ex: Strawberries, Cinnamon...",
+      "add": "Add",
+      "warning": "AI will avoid these {{count}} allergens in recipes."
+    },
+    "conditions": {
+      "title": "⚕️ Health Conditions",
+      "subtitle": "Select conditions we should consider",
+      "otherLabel": "Other (specify if you have another condition):",
+      "otherPlaceholder": "Ex: Hypothyroidism, Anemia...",
+      "add": "Add",
+      "note": "This helps personalize recipes but is NOT medical advice. Always consult a professional."
+    },
+    "diet": {
+      "title": "🥗 Dietary Preference",
+      "subtitle": "How do you define yourself?"
+    },
+    "complete": {
+      "record": "Your profile:",
+      "start": "Let's Cook!",
+      "finish": "Finish"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue"
+    }
+  },
+  "chefMode": {
+    "enter": "Start Cooking",
+    "exit": "Exit Chef Mode",
+    "step": "Step {{current}} of {{total}}",
+    "prev": "Previous",
+    "next": "Next",
+    "finish": "Finish Recipe",
+    "wakeLock": {
+      "active": "Screen always on",
+      "error": "Could not lock screen sleep"
+    },
+    "ingredients": "Needed ingredients",
+    "noInstructions": "No instructions available"
   },
   "notFound": {
     "title": "Oops! Recipe not found",

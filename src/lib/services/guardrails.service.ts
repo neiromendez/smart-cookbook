@@ -210,7 +210,7 @@ class GuardrailsServiceClass {
     if (restrictions) sections.push(restrictions);
 
     // Formato de respuesta
-    sections.push(this.buildFormatSection());
+    sections.push(this.buildFormatSection(locale));
 
     return sections.join('\n\n');
   }
@@ -295,7 +295,8 @@ RULES:
     }
 
     if (hasDislikes) {
-      parts.push(`\n🚫 DISLIKES (avoid or suggest substitute): ${profile.dislikes!.join(', ')}`);
+      parts.push(`\n🚫 DISLIKES (DO NOT use these ingredients): ${profile.dislikes!.join(', ')}`);
+      parts.push('- If using a substitute, mention it clearly in the recipe');
     }
 
     return parts.join('\n');
@@ -303,24 +304,44 @@ RULES:
 
   /**
    * Sección de formato de respuesta
-   * Prompt siempre en inglés - el idioma de respuesta se define en buildBaseSection
+   * Los labels se traducen según el locale
    */
-  private buildFormatSection(): string {
-    return `📝 RESPONSE FORMAT (use this structure, translate headers to response language):
+  private buildFormatSection(locale: 'en' | 'es'): string {
+    const labels = locale === 'es'
+      ? {
+          prep: 'Preparación',
+          cook: 'Cocción',
+          servings: 'Porciones',
+          ingredients: 'Ingredientes',
+          instructions: 'Instrucciones',
+          tip: 'Consejo del Chef',
+          notices: 'Avisos',
+        }
+      : {
+          prep: 'Prep',
+          cook: 'Cook',
+          servings: 'Servings',
+          ingredients: 'Ingredients',
+          instructions: 'Instructions',
+          tip: "Chef's Tip",
+          notices: 'Notices',
+        };
+
+    return `📝 RESPONSE FORMAT (use this exact structure):
 
 ## 🍽️ [Recipe Title]
-**⏱️ Prep**: X min | **🍳 Cook**: Y min | **👥 Servings**: Z
+**⏱️ ${labels.prep}**: X min | **🍳 ${labels.cook}**: Y min | **👥 ${labels.servings}**: Z
 
-### 📦 Ingredients
+### 📦 ${labels.ingredients}
 - Ingredient (amount)
 
-### 👨‍🍳 Instructions
+### 👨‍🍳 ${labels.instructions}
 1. Step...
 
-### 💡 Chef's Tip
+### 💡 ${labels.tip}
 [Personalized tip]
 
-### ⚠️ Notices
+### ⚠️ ${labels.notices}
 [Only if there are allergens or health condition adaptations]`;
   }
 
@@ -402,7 +423,8 @@ RULES:
     }
 
     if (hasDislikes) {
-      parts.push(`🚫 DISLIKES: ${profile.dislikes!.join(', ')}`);
+      parts.push(`🚫 DISLIKES (DO NOT use these ingredients): ${profile.dislikes!.join(', ')}`);
+      parts.push('   → If using a substitute, clarify it in the title or description (e.g., "lettuce wraps" instead of just "tacos")');
     }
 
     if (hasDiet) {

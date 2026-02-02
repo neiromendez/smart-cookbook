@@ -26,6 +26,7 @@ interface RecipeGeneratorProps {
   apiKeys: AIProviderKey[];
   chefProfile?: ChefProfile;
   onSwitchProvider: (providerId: string) => void;
+  onDeleteIdea?: (id: string) => void;
   loadedRecipe?: Recipe | null; // Receta cargada desde el historial
   onRecipeLoaded?: () => void; // Callback cuando la receta se ha mostrado
 }
@@ -55,6 +56,7 @@ export function RecipeGenerator({
   apiKeys,
   chefProfile,
   onSwitchProvider,
+  onDeleteIdea,
   loadedRecipe,
   onRecipeLoaded,
 }: RecipeGeneratorProps) {
@@ -64,7 +66,13 @@ export function RecipeGenerator({
   const [ingredients, setIngredients] = useState('');
   const [selectedMealType, setSelectedMealType] = useState<string | null>(null);
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
-  const [servings, setServings] = useState(1);
+  const [servings, setServings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('smart-cookbook-servings');
+      return saved ? parseInt(saved, 10) : 2;
+    }
+    return 2;
+  });
   const [guestRestrictions, setGuestRestrictions] = useState('');
   const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
 
@@ -420,25 +428,36 @@ export function RecipeGenerator({
         // Limpiar el prefijo de lista
         let cleaned = trimmed.replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '').trim();
 
-        // Extraer cantidad si está entre paréntesis al final
-        const amountMatch = cleaned.match(/\(([^)]+)\)\s*$/);
+        // 1. Extraer cantidad si está entre paréntesis al final "(500g)"
+        const parenMatch = cleaned.match(/\(([^)]+)\)\s*$/);
         let amount = '';
         let name = cleaned;
 
-        if (amountMatch) {
-          amount = amountMatch[1];
+        if (parenMatch) {
+          amount = parenMatch[1];
           name = cleaned.replace(/\([^)]+\)\s*$/, '').trim();
         }
-
-        // También buscar cantidades al inicio (ej: "200g pollo")
-        const prefixAmountMatch = name.match(/^(\d+\s*(?:g|kg|ml|l|oz|lb|cups?|tbsp|tsp|pcs?|unidades?|piezas?)?)\s+(.+)/i);
-        if (prefixAmountMatch && !amount) {
-          amount = prefixAmountMatch[1];
-          name = prefixAmountMatch[2];
+        // 2. Extraer cantidad si está al inicio separada por ":" (ej: "250g: Pollo")
+        else if (cleaned.includes(':')) {
+          const parts = cleaned.split(':');
+          amount = parts[0].trim();
+          name = parts.slice(1).join(':').trim();
+        }
+        // 3. Extraer cantidad si empieza con números (ej: "500g de pollo", "2 huevos")
+        else {
+          const quantityMatch = cleaned.match(/^(\d+(?:[\d./\s]*(?:g|gr|gramos|kg|kilos?|ml|l|litros?|oz|onzas?|lb|libras?|cups?|tazas?|tbsp|cda|cucharadas?|tsp|cdta|items?|units?|unidades?|piezas?|ramitos?))?)\s+(?:de\s+)?(.+)/i);
+          if (quantityMatch) {
+            amount = quantityMatch[1].trim();
+            name = quantityMatch[2].trim();
+          }
         }
 
         if (name) {
-          ingredients.push({ name, amount, recipeTitle: recipeTitle || undefined });
+          ingredients.push({
+            name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(),
+            amount,
+            recipeTitle: recipeTitle || undefined
+          });
         }
       }
     }
@@ -671,26 +690,30 @@ export function RecipeGenerator({
                   👥 {lang === 'es' ? '¿Cuántas personas?' : 'How many people?'}
                 </label>
                 <div className="flex items-center gap-3">
-                  {[1, 2, 3, 4, 6].map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setServings(num)}
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-gray-400" />
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={servings}
+                      onChange={e => {
+                        const value = Math.max(1, Math.min(50, parseInt(e.target.value) || 1));
+                        setServings(value);
+                        localStorage.setItem('smart-cookbook-servings', value.toString());
+                      }}
                       disabled={isGenerating}
                       className={cn(
-                        'w-10 h-10 rounded-lg text-sm font-bold border-2 transition-all',
-                        servings === num
-                          ? 'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300'
-                          : 'border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800'
+                        'w-16 h-10 rounded-lg text-center text-sm font-bold border-2 transition-all',
+                        'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
+                        'focus:outline-none focus:ring-2 focus:ring-orange-500/50',
+                        'disabled:opacity-50 disabled:cursor-not-allowed'
                       )}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                  <div className="ml-auto flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{servings}</span>
+                    />
                   </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {lang === 'es' ? 'personas' : 'people'}
+                  </span>
                 </div>
               </div>
 
@@ -784,7 +807,7 @@ export function RecipeGenerator({
         {ideasStatus.state === 'error' && (
           <ErrorCard
             error={ideasStatus.error}
-            onRetry={() => handleGenerateIdeas({ preventDefault: () => {} } as React.FormEvent)}
+            onRetry={() => handleGenerateIdeas({ preventDefault: () => { } } as React.FormEvent)}
             onSwitchProvider={handleSwitchProvider}
             provider={selectedProvider}
           />
@@ -800,6 +823,7 @@ export function RecipeGenerator({
             selectedIdea={selectedIdea}
             onSelectIdea={selectIdea}
             onGenerateRecipe={handleGenerateRecipeFromIdea}
+            onDeleteIdea={onDeleteIdea}
             isGenerating={isGeneratingRecipe}
             locale={lang}
           />
