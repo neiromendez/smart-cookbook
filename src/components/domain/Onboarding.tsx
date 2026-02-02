@@ -16,6 +16,7 @@ import {
   Sparkles,
   MapPin,
   Trophy,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -38,55 +39,55 @@ const STEPS: OnboardingStep[] = ['welcome', 'biometrics', 'skills', 'allergies',
 
 // Alergias comunes
 const COMMON_ALLERGIES = [
-  { id: 'peanuts', label: { es: 'Maní/Cacahuetes', en: 'Peanuts' }, emoji: '🥜' },
-  { id: 'tree-nuts', label: { es: 'Frutos secos', en: 'Tree Nuts' }, emoji: '🌰' },
-  { id: 'milk', label: { es: 'Lácteos', en: 'Dairy/Milk' }, emoji: '🥛' },
-  { id: 'eggs', label: { es: 'Huevos', en: 'Eggs' }, emoji: '🥚' },
-  { id: 'wheat', label: { es: 'Trigo/Gluten', en: 'Wheat/Gluten' }, emoji: '🌾' },
-  { id: 'soy', label: { es: 'Soja', en: 'Soy' }, emoji: '🫘' },
-  { id: 'fish', label: { es: 'Pescado', en: 'Fish' }, emoji: '🐟' },
-  { id: 'shellfish', label: { es: 'Mariscos', en: 'Shellfish' }, emoji: '🦐' },
-  { id: 'sesame', label: { es: 'Sésamo', en: 'Sesame' }, emoji: '🌱' },
+  { id: 'peanuts', emoji: '🥜' },
+  { id: 'tree-nuts', emoji: '🌰' },
+  { id: 'milk', emoji: '🥛' },
+  { id: 'eggs', emoji: '🥚' },
+  { id: 'wheat', emoji: '🌾' },
+  { id: 'soy', emoji: '🫘' },
+  { id: 'fish', emoji: '🐟' },
+  { id: 'shellfish', emoji: '🦐' },
+  { id: 'sesame', emoji: '🌱' },
 ];
 
 // Condiciones de salud
 const HEALTH_CONDITIONS = [
-  { id: 'diabetes', label: { es: 'Diabetes', en: 'Diabetes' }, emoji: '💉' },
-  { id: 'hypertension', label: { es: 'Hipertensión', en: 'Hypertension' }, emoji: '❤️‍🩹' },
-  { id: 'fatty-liver', label: { es: 'Hígado graso', en: 'Fatty Liver' }, emoji: '🫁' },
-  { id: 'high-cholesterol', label: { es: 'Colesterol alto', en: 'High Cholesterol' }, emoji: '🫀' },
-  { id: 'celiac', label: { es: 'Celiaquía', en: 'Celiac Disease' }, emoji: '🚫🌾' },
-  { id: 'lactose-intolerance', label: { es: 'Intolerancia lactosa', en: 'Lactose Intolerance' }, emoji: '🥛❌' },
-  { id: 'gastritis', label: { es: 'Gastritis/Reflujo', en: 'Gastritis/Reflux' }, emoji: '🔥' },
-  { id: 'kidney-disease', label: { es: 'Enfermedad renal', en: 'Kidney Disease' }, emoji: '🫘' },
-  { id: 'gout', label: { es: 'Gota', en: 'Gout' }, emoji: '🦶' },
-  { id: 'ibs', label: { es: 'Colon irritable', en: 'IBS' }, emoji: '🌀' },
+  { id: 'diabetes', emoji: '💉' },
+  { id: 'hypertension', emoji: '❤️‍🩹' },
+  { id: 'fatty-liver', emoji: '🫁' },
+  { id: 'high-cholesterol', emoji: '🫀' },
+  { id: 'celiac', emoji: '🚫🌾' },
+  { id: 'lactose-intolerance', emoji: '🥛❌' },
+  { id: 'gastritis', emoji: '🔥' },
+  { id: 'kidney-disease', emoji: '🫘' },
+  { id: 'gout', emoji: '🦶' },
+  { id: 'ibs', emoji: '🌀' },
 ];
 
 // Tipos de dieta
-const DIET_TYPES: { id: DietType; label: { es: string; en: string }; emoji: string; desc: { es: string; en: string } }[] = [
-  { id: 'any', label: { es: 'Sin preferencias', en: 'No preferences' }, emoji: '🍖🥦', desc: { es: 'Como de todo (carnes y vegetales)', en: 'I eat everything (meat and vegetables)' } },
-  { id: 'omnivore', label: { es: 'Omnívoro', en: 'Omnivore' }, emoji: '🍽️', desc: { es: 'Dieta equilibrada estándar', en: 'Standard balanced diet' } },
-  { id: 'vegetarian', label: { es: 'Vegetariano', en: 'Vegetarian' }, emoji: '🥗', desc: { es: 'Sin carne ni pescado', en: 'No meat or fish' } },
-  { id: 'vegan', label: { es: 'Vegano', en: 'Vegan' }, emoji: '🌱', desc: { es: 'Sin productos animales', en: 'No animal products' } },
-  { id: 'keto', label: { es: 'Keto', en: 'Keto' }, emoji: '🥓', desc: { es: 'Bajo en carbohidratos', en: 'Low carb, high fat' } },
-  { id: 'paleo', label: { es: 'Paleo', en: 'Paleo' }, emoji: '🦴', desc: { es: 'Alimentos no procesados', en: 'Whole foods only' } },
-  { id: 'gluten-free', label: { es: 'Sin gluten', en: 'Gluten-Free' }, emoji: '🚫🌾', desc: { es: 'Evito el gluten', en: 'No gluten' } },
+const DIET_TYPES: { id: DietType; emoji: string }[] = [
+  { id: 'any', emoji: '🍖🥦' },
+  { id: 'omnivore', emoji: '🍽️' },
+  { id: 'vegetarian', emoji: '🥗' },
+  { id: 'vegan', emoji: '🌱' },
+  { id: 'keto', emoji: ' Bacon' },
+  { id: 'paleo', emoji: '🦴' },
+  { id: 'gluten-free', emoji: '🚫🌾' },
 ];
 
 // Generos
 const GENDERS = [
-  { id: 'male', label: { es: 'Masculino', en: 'Male' } },
-  { id: 'female', label: { es: 'Femenino', en: 'Female' } },
-  { id: 'non-binary', label: { es: 'No binario', en: 'Non-Binary' } },
-  { id: 'prefer-not-to-say', label: { es: 'Prefiero no decir', en: 'Prefer not to say' } },
+  { id: 'male' },
+  { id: 'female' },
+  { id: 'non-binary' },
+  { id: 'prefer-not-to-say' },
 ] as const;
 
 // Niveles de habilidad
 const SKILL_LEVELS = [
-  { id: 'novice', label: { es: 'Novato', en: 'Novice' }, desc: { es: 'Estoy aprendiendo lo básico', en: 'I am learning the basics' }, emoji: '🥚' },
-  { id: 'home-cook', label: { es: 'Cocinero de Casa', en: 'Home Cook' }, desc: { es: 'Cocino regularmente para mi familia', en: 'I cook regularly for my family' }, emoji: '🍳' },
-  { id: 'pro', label: { es: 'Profesional', en: 'Pro' }, desc: { es: 'Manejo técnicas avanzadas y precisión', en: 'I master advanced techniques and precision' }, emoji: '🔪' },
+  { id: 'novice', emoji: '🥚' },
+  { id: 'home-cook', emoji: '🍳' },
+  { id: 'pro', emoji: '🔪' },
 ] as const;
 
 // ============================================
@@ -233,33 +234,29 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
 
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {lang === 'es' ? '¡Bienvenido a Smart Cookbook!' : 'Welcome to Smart Cookbook!'}
+                    {t('onboarding.welcome.title')}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Vamos a crear tu perfil de Chef para personalizar las recetas a tus necesidades.'
-                      : "Let's create your Chef profile to personalize recipes to your needs."}
+                    {t('onboarding.welcome.subtitle')}
                   </p>
                 </div>
 
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
                   <p className="text-sm text-amber-800 dark:text-amber-200">
-                    <strong>⚠️ {lang === 'es' ? 'Importante' : 'Important'}:</strong>{' '}
-                    {lang === 'es'
-                      ? 'Toda la información se guarda SOLO en tu navegador. Nunca se comparte con nadie.'
-                      : 'All information is stored ONLY in your browser. It is never shared with anyone.'}
+                    <strong>⚠️ {t('onboarding.welcome.important')}:</strong>{' '}
+                    {t('onboarding.welcome.privacy')}
                   </p>
                 </div>
 
                 <div className="max-w-xs mx-auto mb-8 space-y-4 text-left">
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">
-                      {lang === 'es' ? '¿Cómo te llamas?' : 'What is your name?'}
+                      {t('onboarding.welcome.nameLabel')}
                     </label>
                     <Input
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                      placeholder={lang === 'es' ? 'Ej: Ferran Adrià' : 'Ex: Gordon Ramsay'}
+                      placeholder={t('onboarding.welcome.namePlaceholder')}
                       className="text-center"
                     />
                   </div>
@@ -267,18 +264,16 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1 flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      {lang === 'es' ? '¿Dónde te encuentras?' : 'Where are you located?'}
+                      {t('onboarding.welcome.locationLabel')}
                     </label>
                     <Input
                       value={profile.location || ''}
                       onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                      placeholder={lang === 'es' ? 'Ej: Bogotá, Colombia' : 'Ex: Paris, France'}
+                      placeholder={t('onboarding.welcome.locationPlaceholder')}
                       className="text-center"
                     />
                     <p className="text-[10px] text-gray-400 text-center italic">
-                      {lang === 'es'
-                        ? 'Ayuda a sugerir ingredientes locales y ajustar cocción.'
-                        : 'Helps suggesting local ingredients and adjusting cooking.'}
+                      {t('onboarding.welcome.locationSubtext')}
                     </p>
                   </div>
                 </div>
@@ -291,10 +286,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     icon={<ArrowRight className="h-4 w-4" />}
                     disabled={!profile.name?.trim()}
                   >
-                    {lang === 'es' ? 'Comenzar' : 'Get Started'}
+                    {t('onboarding.welcome.start')}
                   </Button>
                   <Button variant="ghost" onClick={onSkip} className="text-gray-500">
-                    {lang === 'es' ? 'Omitir por ahora' : 'Skip for now'}
+                    {t('onboarding.welcome.skip')}
                   </Button>
                 </div>
               </motion.div>
@@ -317,10 +312,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <User className="h-6 w-6 text-blue-500" />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? 'Información básica' : 'Basic Information'}
+                    {t('onboarding.biometrics.title')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es' ? 'Opcional - para ajustar porciones' : 'Optional - to adjust portions'}
+                    {t('onboarding.biometrics.subtitle')}
                   </p>
                 </div>
 
@@ -328,7 +323,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   {/* Edad */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {lang === 'es' ? 'Edad' : 'Age'}
+                      {t('onboarding.biometrics.age')}
                     </label>
                     <Input
                       type="number"
@@ -343,7 +338,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   {/* Altura */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {lang === 'es' ? 'Altura (cm)' : 'Height (cm)'}
+                      {t('onboarding.biometrics.height')}
                     </label>
                     <Input
                       type="number"
@@ -358,7 +353,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   {/* Género */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {lang === 'es' ? 'Género' : 'Gender'}
+                      {t('onboarding.biometrics.gender')}
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       {GENDERS.map(gender => (
@@ -373,7 +368,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                               : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-orange-300'
                           )}
                         >
-                          {gender.label[lang]}
+                          {t(`profile.gender.${gender.id}`)}
                         </button>
                       ))}
                     </div>
@@ -401,12 +396,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <Trophy className="h-6 w-6 text-orange-500" />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? 'Tu Nivel de Cocina' : 'Your Cooking Skill'}
+                    {t('onboarding.skills.title')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Esto ajusta la terminología y complejidad de las recetas.'
-                      : 'This adjusts recipe terminology and complexity.'}
+                    {t('onboarding.skills.subtitle')}
                   </p>
                 </div>
 
@@ -424,8 +417,8 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     >
                       <span className="text-2xl mr-4 group-hover:scale-110 transition-transform">{skill.emoji}</span>
                       <div className="flex-1">
-                        <div className="font-bold text-gray-900 dark:text-white">{skill.label[lang]}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{skill.desc[lang]}</div>
+                        <div className="font-bold text-gray-900 dark:text-white">{t(`profile.skillLevel.${skill.id}`)}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{t(`profile.skillLevel.${skill.id}Desc`)}</div>
                       </div>
                       {profile.skillLevel === skill.id && (
                         <Check className="h-5 w-5 text-orange-500" />
@@ -455,12 +448,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <AlertTriangle className="h-6 w-6 text-red-500" />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? '🛡️ Escudo de Salud: Alergias' : '🛡️ Health Shield: Allergies'}
+                    {t('onboarding.allergies.title')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Selecciona tus alergias alimentarias (si tienes)'
-                      : 'Select your food allergies (if any)'}
+                    {t('onboarding.allergies.subtitle')}
                   </p>
                 </div>
 
@@ -483,7 +474,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                         )}
                       >
                         <span>{allergy.emoji}</span>
-                        <span className="flex-1 text-left">{allergy.label[lang]}</span>
+                        <span className="flex-1 text-left">{t(`profile.allergies.items.${allergy.id}`)}</span>
                         {isSelected && <Check className="h-4 w-4" />}
                       </button>
                     );
@@ -493,14 +484,14 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                 {/* Campo "Otro" */}
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                    {lang === 'es' ? 'Otro (indica si tienes otra alergia):' : 'Other (specify if you have another allergy):'}
+                    {t('onboarding.allergies.otherLabel')}
                   </label>
                   <div className="flex gap-2">
                     <Input
                       value={customAllergyInput}
                       onChange={(e) => setCustomAllergyInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddCustomAllergy()}
-                      placeholder={lang === 'es' ? 'Ej: Fresas, Canela...' : 'Ex: Strawberries, Cinnamon...'}
+                      placeholder={t('onboarding.allergies.otherPlaceholder')}
                       className="flex-1"
                     />
                     <Button
@@ -510,7 +501,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       onClick={handleAddCustomAllergy}
                       disabled={!customAllergyInput.trim()}
                     >
-                      {lang === 'es' ? 'Añadir' : 'Add'}
+                      {t('onboarding.allergies.add')}
                     </Button>
                   </div>
                 </div>
@@ -526,7 +517,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                           className="flex items-center gap-1.5 px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md text-xs border border-red-200 dark:border-red-800"
                         >
                           <span>{common ? common.emoji : '🛡️'}</span>
-                          <span>{common ? common.label[lang] : a}</span>
+                          <span>{common ? t(`profile.allergies.items.${a}`) : a}</span>
                           <button
                             onClick={() => setProfile({
                               ...profile,
@@ -545,9 +536,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                 {profile.allergies.length > 0 && (
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                     <p className="text-sm text-red-700 dark:text-red-300">
-                      <strong>⚠️</strong> {lang === 'es'
-                        ? `La IA evitará estos ${profile.allergies.length} alérgenos en las recetas.`
-                        : `AI will avoid these ${profile.allergies.length} allergens in recipes.`}
+                      {t('onboarding.allergies.warning', { count: profile.allergies.length })}
                     </p>
                   </div>
                 )}
@@ -573,12 +562,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <Heart className="h-6 w-6 text-pink-500" />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? '⚕️ Condiciones de Salud' : '⚕️ Health Conditions'}
+                    {t('onboarding.conditions.title')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Selecciona condiciones que debamos considerar'
-                      : 'Select conditions we should consider'}
+                    {t('onboarding.conditions.subtitle')}
                   </p>
                 </div>
 
@@ -601,7 +588,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                         )}
                       >
                         <span>{condition.emoji}</span>
-                        <span className="flex-1 text-left">{condition.label[lang]}</span>
+                        <span className="flex-1 text-left">{t(`profile.conditions.${condition.id}`)}</span>
                         {isSelected && <Check className="h-4 w-4" />}
                       </button>
                     );
@@ -611,14 +598,14 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                 {/* Campo "Otro" para condiciones */}
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                    {lang === 'es' ? 'Otro (indica si tienes otra condición):' : 'Other (specify if you have another condition):'}
+                    {t('onboarding.conditions.otherLabel')}
                   </label>
                   <div className="flex gap-2">
                     <Input
                       value={customConditionInput}
                       onChange={(e) => setCustomConditionInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddCustomCondition()}
-                      placeholder={lang === 'es' ? 'Ej: Hipotiroidismo, Anemia...' : 'Ex: Hypothyroidism, Anemia...'}
+                      placeholder={t('onboarding.conditions.otherPlaceholder')}
                       className="flex-1"
                     />
                     <Button
@@ -628,7 +615,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       onClick={handleAddCustomCondition}
                       disabled={!customConditionInput.trim()}
                     >
-                      {lang === 'es' ? 'Añadir' : 'Add'}
+                      {t('onboarding.conditions.add')}
                     </Button>
                   </div>
                 </div>
@@ -644,7 +631,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                           className="flex items-center gap-1.5 px-2 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-md text-xs border border-pink-200 dark:border-pink-800"
                         >
                           <span>{health ? health.emoji : '⚕️'}</span>
-                          <span>{health ? health.label[lang] : c}</span>
+                          <span>{health ? t(`profile.conditions.${c}`) : c}</span>
                           <button
                             onClick={() => setProfile({
                               ...profile,
@@ -662,10 +649,8 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
 
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <p className="text-xs text-blue-700 dark:text-blue-300">
-                    <strong>ℹ️ {lang === 'es' ? 'Nota' : 'Note'}:</strong>{' '}
-                    {lang === 'es'
-                      ? 'Esta información ayuda a personalizar recetas, pero NO es consejo médico. Consulta siempre a un profesional.'
-                      : 'This helps personalize recipes but is NOT medical advice. Always consult a professional.'}
+                    <strong>ℹ️ {t('onboarding.welcome.important')}</strong>{' '}
+                    {t('onboarding.conditions.note')}
                   </p>
                 </div>
 
@@ -690,10 +675,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <Utensils className="h-6 w-6 text-green-500" />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? '🥗 Preferencia Dietética' : '🥗 Dietary Preference'}
+                    {t('onboarding.diet.title')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es' ? '¿Cómo te defines?' : 'How do you define yourself?'}
+                    {t('onboarding.diet.subtitle')}
                   </p>
                 </div>
 
@@ -718,10 +703,10 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                             'font-medium',
                             isSelected ? 'text-green-700 dark:text-green-300' : 'text-gray-900 dark:text-white'
                           )}>
-                            {diet.label[lang]}
+                            {t(`profile.diet.${diet.id}`)}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {diet.desc[lang]}
+                            {t(`profile.diet.${diet.id}Desc`)}
                           </div>
                         </div>
                         {isSelected && <Check className="h-5 w-5 text-green-500" />}
@@ -748,15 +733,13 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
               >
                 <div className="text-center">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full mb-3">
-                    <X className="h-6 w-6 text-orange-500" />
+                    <span className="text-2xl">👎</span>
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {lang === 'es' ? '🚫 ¿Qué NO te gusta?' : '🚫 What do you NOT like?'}
+                    {t('profile.dislikes.label')}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Dinos qué ingredientes debemos evitar o buscar alternativas'
-                      : 'Tell us which ingredients we should avoid or find alternatives for'}
+                    {t('profile.dislikes.description')}
                   </p>
                 </div>
 
@@ -766,7 +749,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       value={customDislikeInput}
                       onChange={(e) => setCustomDislikeInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddCustomDislike()}
-                      placeholder={lang === 'es' ? 'Ej: Tomate, Cebolla, Pepino...' : 'Ex: Tomato, Onion, Cucumber...'}
+                      placeholder={t('profile.dislikes.placeholder')}
                       className="flex-1"
                     />
                     <Button
@@ -775,9 +758,9 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                       size="sm"
                       onClick={handleAddCustomDislike}
                       disabled={!customDislikeInput.trim()}
-                    >
-                      {lang === 'es' ? 'Añadir' : 'Add'}
-                    </Button>
+                      icon={<Plus className="h-5 w-5" />}
+                      aria-label={t('profile.dislikes.add')}
+                    />
                   </div>
 
                   {/* Mostrar dislikes añadidos */}
@@ -832,19 +815,17 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
 
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {lang === 'es' ? '¡Perfil Creado!' : 'Profile Created!'}
+                    {t('onboarding.complete.title')}
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    {lang === 'es'
-                      ? 'Tu Chef ID está listo. Las recetas se personalizarán para ti.'
-                      : 'Your Chef ID is ready. Recipes will be personalized for you.'}
+                    {t('onboarding.complete.subtitle')}
                   </p>
                 </div>
 
                 {/* Resumen del perfil */}
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-left space-y-3">
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === 'es' ? '📋 Tu perfil:' : '📋 Your profile:'}
+                    {t('onboarding.complete.record')}
                   </h3>
 
                   <div className="text-sm space-y-2">
@@ -870,7 +851,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <div className="flex items-center gap-2">
                       <span className="text-green-500">🥗</span>
                       <span className="text-gray-600 dark:text-gray-400">
-                        {DIET_TYPES.find(d => d.id === profile.diet)?.label[lang]}
+                        {t(`profile.diet.${profile.diet}`)}
                       </span>
                     </div>
 
@@ -878,7 +859,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                     <div className="flex items-center gap-2">
                       <span className="text-yellow-500">🏆</span>
                       <span className="text-gray-600 dark:text-gray-400">
-                        {SKILL_LEVELS.find(s => s.id === profile.skillLevel)?.label[lang]}
+                        {t(`profile.skillLevel.${profile.skillLevel}`)}
                       </span>
                     </div>
 
@@ -888,7 +869,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                         <span className="text-red-500">⚠️</span>
                         <span className="text-gray-600 dark:text-gray-400">
                           {profile.allergies.map(a =>
-                            COMMON_ALLERGIES.find(al => al.id === a)?.label[lang] || a
+                            t(`profile.allergies.items.${a}`) || a
                           ).join(', ')}
                         </span>
                       </div>
@@ -900,7 +881,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                         <span className="text-pink-500">❤️</span>
                         <span className="text-gray-600 dark:text-gray-400">
                           {profile.conditions.map(c =>
-                            HEALTH_CONDITIONS.find(h => h.id === c)?.label[lang] || c
+                            t(`profile.conditions.${c}`) || c
                           ).join(', ')}
                         </span>
                       </div>
@@ -919,7 +900,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                 </div>
 
                 <Button onClick={handleComplete} size="lg" className="w-full" icon={<ChefHat className="h-4 w-4" />}>
-                  {lang === 'es' ? '¡A cocinar!' : "Let's Cook!"}
+                  {t('onboarding.complete.start')}
                 </Button>
               </motion.div>
             )}
@@ -945,10 +926,10 @@ function NavigationButtons({ onPrev, onNext, lang, nextLabel }: NavigationButton
   return (
     <div className="flex gap-3">
       <Button variant="outline" onClick={onPrev} className="flex-1" icon={<ArrowLeft className="h-4 w-4" />}>
-        {lang === 'es' ? 'Atrás' : 'Back'}
+        {t('onboarding.nav.back')}
       </Button>
       <Button onClick={onNext} className="flex-1">
-        {nextLabel || (lang === 'es' ? 'Continuar' : 'Continue')}
+        {nextLabel || t('onboarding.nav.continue')}
         <ArrowRight className="h-4 w-4 ml-2" />
       </Button>
     </div>

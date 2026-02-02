@@ -72,7 +72,7 @@ const COMMON_CONDITIONS = [
  * - Ingredientes que no le gustan
  */
 export function ProfileManager({ profile, onSave, onClose }: ProfileManagerProps) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language as 'es' | 'en';
 
   const [editedProfile, setEditedProfile] = useState<ChefProfile>(profile);
@@ -328,7 +328,7 @@ export function ProfileManager({ profile, onSave, onClose }: ProfileManagerProps
         {/* Cosas que no le gustan */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            👎 {lang === 'es' ? 'No me gusta' : "I don't like"}
+            👎 {t('profile.dislikes.label')}
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {editedProfile.dislikes.map(dislike => (
@@ -345,7 +345,7 @@ export function ProfileManager({ profile, onSave, onClose }: ProfileManagerProps
           </div>
           <div className="flex gap-2">
             <Input
-              placeholder={lang === 'es' ? 'Ej: cilantro, hígado...' : 'Ex: cilantro, liver...'}
+              placeholder={t('profile.dislikes.placeholder')}
               value={customDislike}
               onChange={e => setCustomDislike(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addDislike()}
