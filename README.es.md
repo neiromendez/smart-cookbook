@@ -6,6 +6,8 @@
 
 Genera recetas personalizadas basadas en los ingredientes que tengas disponibles. Sin servidores, sin bases de datos, todo funciona directamente en tu navegador.
 
+🔗 **[Probar Demo en Vivo](https://smart-cookbook.vercel.app/)**
+
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?style=flat-square&logo=tailwind-css)
