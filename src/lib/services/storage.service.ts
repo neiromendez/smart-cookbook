@@ -9,7 +9,7 @@ const STORAGE_PREFIX = 'smart-cookbook:';
 const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'system',
   locale: 'es',
-  rememberKeys: false,
+  rememberKeys: true,
 };
 
 const DEFAULT_PROFILE: ChefProfile = {

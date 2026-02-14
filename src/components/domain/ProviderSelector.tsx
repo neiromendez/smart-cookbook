@@ -46,7 +46,6 @@ export function ProviderSelector({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [dynamicModels, setDynamicModels] = useState<ModelInfo[]>([]);
-  const [loadingModels, setLoadingModels] = useState(false);
 
   // Efecto para cargar modelos dinámicos (especialmente para OpenRouter)
   useEffect(() => {
@@ -62,7 +61,6 @@ export function ProviderSelector({
       // Si ya tenemos modelos estáticos y no hay key, quizás no sea necesario,
       // pero para OpenRouter queremos la lista actualizada si es posible.
 
-      setLoadingModels(true);
       try {
         const models = await adapter.listModels(apiKey);
         if (models && models.length > 0) {
@@ -70,8 +68,6 @@ export function ProviderSelector({
         }
       } catch (error) {
         console.error('Error fetching models:', error);
-      } finally {
-        setLoadingModels(false);
       }
     };
 

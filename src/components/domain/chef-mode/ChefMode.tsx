@@ -28,7 +28,8 @@ export function ChefMode({ recipe, onClose }: ChefModeProps) {
     const lang = i18n.language as 'es' | 'en';
 
     const [currentStep, setCurrentStep] = useState(0);
-    const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+    const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+    const [wakeLockActive, setWakeLockActive] = useState(false);
     const [wakeLockError, setWakeLockError] = useState(false);
     const [activeTimers, setActiveTimers] = useState<Record<number, { seconds: number; total: number }>>({});
 
@@ -41,37 +42,46 @@ export function ChefMode({ recipe, onClose }: ChefModeProps) {
         if ('wakeLock' in navigator) {
             try {
                 const sentinel = await navigator.wakeLock.request('screen');
-                setWakeLock(sentinel);
+                wakeLockRef.current = sentinel;
+                setWakeLockActive(true);
+                setWakeLockError(false);
                 console.info('[ChefMode] Wake Lock is active');
 
                 sentinel.addEventListener('release', () => {
                     console.info('[ChefMode] Wake Lock was released');
-                    setWakeLock(null);
+                    wakeLockRef.current = null;
+                    setWakeLockActive(false);
                 });
             } catch (err) {
                 console.error('[ChefMode] Wake Lock error:', err);
+                setWakeLockActive(false);
                 setWakeLockError(true);
             }
         }
     }, []);
 
     useEffect(() => {
-        requestWakeLock();
+        const wakeLockTimeoutId = window.setTimeout(() => {
+            void requestWakeLock();
+        }, 0);
+
         return () => {
-            wakeLock?.release();
+            window.clearTimeout(wakeLockTimeoutId);
+            void wakeLockRef.current?.release();
+            wakeLockRef.current = null;
         };
     }, [requestWakeLock]);
 
     // Re-solicitar si la página vuelve a estar visible
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (wakeLock !== null && document.visibilityState === 'visible') {
-                requestWakeLock();
+            if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+                void requestWakeLock();
             }
         };
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [requestWakeLock, wakeLock]);
+    }, [requestWakeLock, wakeLockActive]);
 
     // ============================================
     // NAVIGATION LOGIC
@@ -151,7 +161,7 @@ export function ChefMode({ recipe, onClose }: ChefModeProps) {
                             <span className="text-xs text-orange-400 font-bold uppercase tracking-wider">
                                 {t('chefMode.step', { current: currentStep + 1, total: stepCount })}
                             </span>
-                            {wakeLock ? (
+                            {wakeLockActive ? (
                                 <span className="flex items-center gap-1 text-[10px] text-green-400">
                                     <Zap className="h-3 w-3" /> {t('chefMode.wakeLock.active')}
                                 </span>

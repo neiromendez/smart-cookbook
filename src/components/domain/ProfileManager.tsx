@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   User,
   X,
@@ -10,8 +9,6 @@ import {
   AlertTriangle,
   Heart,
   ChefHat,
-  MapPin,
-  Trash2,
   Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -79,12 +76,10 @@ export function ProfileManager({ profile, onSave, onClose }: ProfileManagerProps
   const [customAllergy, setCustomAllergy] = useState('');
   const [customCondition, setCustomCondition] = useState('');
   const [customDislike, setCustomDislike] = useState('');
-  const [hasChanges, setHasChanges] = useState(false);
-
-  useEffect(() => {
-    const changed = JSON.stringify(editedProfile) !== JSON.stringify(profile);
-    setHasChanges(changed);
-  }, [editedProfile, profile]);
+  const hasChanges = useMemo(
+    () => JSON.stringify(editedProfile) !== JSON.stringify(profile),
+    [editedProfile, profile]
+  );
 
   const handleSave = () => {
     StorageService.setProfile(editedProfile);

@@ -1,8 +1,8 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
-import { useEffect, useState } from 'react';
 import '@/lib/i18n';
+import { useIsClient } from '@/lib/hooks/useIsClient';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -16,16 +16,11 @@ interface ProvidersProps {
  * - i18n se inicializa via import
  */
 export function Providers({ children }: ProvidersProps) {
-  const [mounted, setMounted] = useState(false);
-
-  // Evitar hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const isClient = useIsClient();
 
   // Mostrar nada hasta que el cliente este montado
   // Esto evita el flash de tema incorrecto
-  if (!mounted) {
+  if (!isClient) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-950">
         {children}

@@ -79,7 +79,7 @@ export function useChefProfile() {
    */
   const skipOnboarding = useCallback(() => {
     // Guardar preferencias por defecto para marcar que ya paso por aqui
-    StorageService.setPreferences({ theme: 'system', locale: 'es', rememberKeys: false });
+    StorageService.setPreferences({ theme: 'system', locale: 'es' });
     setHasCompletedOnboarding(true);
   }, []);
 

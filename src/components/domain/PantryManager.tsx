@@ -1,29 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Package, Plus, X, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
 import { StorageService } from '@/lib/services/storage.service';
-import { cn } from '@/lib/utils/cn';
 
 /**
  * PantryManager - Gestiona los ingredientes basicos (staples)
  */
 export function PantryManager() {
     const { t } = useTranslation();
-    const [items, setItems] = useState<string[]>([]);
+    const [items, setItems] = useState<string[]>(() => {
+        if (typeof window === 'undefined') return [];
+        return StorageService.getPantry();
+    });
     const [newItem, setNewItem] = useState('');
     const [search, setSearch] = useState('');
     const [isExpanded, setIsExpanded] = useState(true);
-
-    // Cargar desde storage
-    useEffect(() => {
-        setItems(StorageService.getPantry());
-    }, []);
 
     const handleAdd = () => {
         if (!newItem.trim()) return;

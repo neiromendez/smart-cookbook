@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { StorageService } from '@/lib/services/storage.service';
 import { useChefProfile } from '@/lib/hooks/useChefProfile';
+import { useIsClient } from '@/lib/hooks/useIsClient';
 import { getAdapter } from '@/lib/adapters';
 import type { AIProviderKey, ChefProfile, Recipe, RecipeIdea, ProteinType, MealType } from '@/types';
 
@@ -25,6 +26,7 @@ import type { AIProviderKey, ChefProfile, Recipe, RecipeIdea, ProteinType, MealT
 type SidebarView = 'default' | 'shopping' | 'history' | 'profile' | 'ideas' | 'settings';
 
 export default function HomePage() {
+  const isClient = useIsClient();
   const { t, i18n } = useTranslation();
   const lang = i18n.language as 'es' | 'en';
 
@@ -39,15 +41,41 @@ export default function HomePage() {
 
   const { theme } = useTheme();
 
-  const [selectedProvider, setSelectedProvider] = useState('openrouter');
-  const [apiKeys, setApiKeys] = useState<AIProviderKey[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState(() => {
+    if (typeof window === 'undefined') return 'openrouter';
+
+    const storedKeys = StorageService.getApiKeys();
+    const lastProvider = StorageService.getLastProvider();
+    const validatedKeys = storedKeys.filter(k => k.validated);
+
+    if (validatedKeys.length > 0) {
+      if (lastProvider && validatedKeys.some(k => k.provider === lastProvider)) {
+        return lastProvider;
+      }
+      return validatedKeys[0].provider;
+    }
+
+    return 'openrouter';
+  });
+  const [apiKeys, setApiKeys] = useState<AIProviderKey[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return StorageService.getApiKeys();
+  });
   const [sidebarView, setSidebarView] = useState<SidebarView>('settings');
   const [mobileOverlayOpen, setMobileOverlayOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [loadedRecipe, setLoadedRecipe] = useState<Recipe | null>(null);
-  const [savedIdeasCount, setSavedIdeasCount] = useState(0);
-  const [savedRecipesCount, setSavedRecipesCount] = useState(0);
-  const [savedIdeas, setSavedIdeas] = useState<RecipeIdea[]>([]);
+  const [savedIdeas, setSavedIdeas] = useState<RecipeIdea[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return StorageService.getRecipeIdeas();
+  });
+  const [savedIdeasCount, setSavedIdeasCount] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    return StorageService.getRecipeIdeas().length;
+  });
+  const [savedRecipesCount] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    return StorageService.getHistory().length;
+  });
 
   // Estados para secciones colapsables
   const [appearanceExpanded, setAppearanceExpanded] = useState(false);
@@ -56,39 +84,6 @@ export default function HomePage() {
   // Filtros para Ideas Guardadas
   const [ideasFilterProtein, setIdeasFilterProtein] = useState<ProteinType | null>(null);
   const [ideasFilterMeal, setIdeasFilterMeal] = useState<MealType | null>(null);
-
-  // Cargar datos de localStorage y seleccionar proveedor automaticamente
-  useEffect(() => {
-    setMounted(true);
-    const storedKeys = StorageService.getApiKeys();
-    setApiKeys(storedKeys);
-
-    // Cargar contadores de ideas y recetas guardadas
-    const ideas = StorageService.getRecipeIdeas();
-    const recipes = StorageService.getHistory();
-    setSavedIdeas(ideas);
-    setSavedIdeasCount(ideas.length);
-    setSavedRecipesCount(recipes.length);
-
-    // Determinar el proveedor a seleccionar
-    const lastProvider = StorageService.getLastProvider();
-    const validatedKeys = storedKeys.filter(k => k.validated);
-
-    if (validatedKeys.length > 0) {
-      // Si el ultimo proveedor usado tiene key valida, usarlo
-      const lastProviderHasKey = lastProvider && validatedKeys.some(k => k.provider === lastProvider);
-
-      if (lastProviderHasKey) {
-        setSelectedProvider(lastProvider);
-      } else {
-        // Si no, usar el primer proveedor con key valida
-        setSelectedProvider(validatedKeys[0].provider);
-      }
-    } else {
-      // Si no hay keys validadas, mostrar settings
-      setSidebarView('settings');
-    }
-  }, []);
 
   const handleSaveApiKey = (provider: string, key: string, selectedModel?: string) => {
     const existingKey = apiKeys.find(k => k.provider === provider);
@@ -206,7 +201,7 @@ export default function HomePage() {
   };
 
   // Loading inicial
-  if (!mounted || profileLoading) {
+  if (!isClient || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -1022,28 +1017,8 @@ const PROTEIN_EMOJIS: Record<ProteinType, string> = {
   seafood: '🦐', egg: '🥚', tofu: '🌱', legumes: '🫘', none: '🥗',
 };
 
-const PROTEIN_LABELS: Record<ProteinType, { es: string; en: string }> = {
-  chicken: { es: 'Pollo', en: 'Chicken' },
-  beef: { es: 'Res', en: 'Beef' },
-  pork: { es: 'Cerdo', en: 'Pork' },
-  fish: { es: 'Pescado', en: 'Fish' },
-  seafood: { es: 'Mariscos', en: 'Seafood' },
-  egg: { es: 'Huevo', en: 'Egg' },
-  tofu: { es: 'Tofu', en: 'Tofu' },
-  legumes: { es: 'Legumbres', en: 'Legumes' },
-  none: { es: 'Vegetariano', en: 'Vegetarian' },
-};
-
 const MEAL_EMOJIS: Record<MealType, string> = {
   breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍿', dessert: '🍰',
-};
-
-const MEAL_LABELS: Record<MealType, { es: string; en: string }> = {
-  breakfast: { es: 'Desayuno', en: 'Breakfast' },
-  lunch: { es: 'Almuerzo', en: 'Lunch' },
-  dinner: { es: 'Cena', en: 'Dinner' },
-  snack: { es: 'Snack', en: 'Snack' },
-  dessert: { es: 'Postre', en: 'Dessert' },
 };
 
 interface IdeasSidebarProps {
@@ -1239,4 +1214,3 @@ function IdeasSidebar({
     </Card>
   );
 }
-

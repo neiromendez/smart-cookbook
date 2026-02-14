@@ -299,7 +299,7 @@ class ErrorServiceClass {
   /**
    * Parsea un error de API y devuelve un APIError estructurado
    */
-  parseAPIError(status: number, body: unknown, provider?: string): APIError {
+  parseAPIError(status: number, body: unknown): APIError {
     // Intentar parsear formato especifico del proveedor
     if (typeof body === 'object' && body !== null) {
       const errorBody = body as Record<string, unknown>;
@@ -310,7 +310,7 @@ class ErrorServiceClass {
         const code = error.code || error.type;
 
         if (code) {
-          const mappedCode = this.mapProviderErrorCode(code, provider);
+          const mappedCode = this.mapProviderErrorCode(code);
           return this.getError(mappedCode);
         }
       }
@@ -334,7 +334,7 @@ class ErrorServiceClass {
   /**
    * Mapea codigos de error especificos de cada proveedor
    */
-  private mapProviderErrorCode(code: string, provider?: string): ErrorCode {
+  private mapProviderErrorCode(code: string): ErrorCode {
     const codeMap: Record<string, ErrorCode> = {
       // OpenAI
       'invalid_api_key': 'INVALID_API_KEY',

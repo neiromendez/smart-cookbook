@@ -9,12 +9,11 @@ import {
   Zap,
   DollarSign,
   Globe,
-  Clock,
   Star,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { getAllProviders, getAdapter } from '@/lib/adapters';
+import { getAllProviders } from '@/lib/adapters';
 import type { AIProviderConfig } from '@/types';
 import { cn } from '@/lib/utils/cn';
 

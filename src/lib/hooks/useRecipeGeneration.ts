@@ -163,7 +163,10 @@ export function useRecipeGeneration({
         systemPrompt,
         enrichedUserPrompt,
         apiKey,
-        { model }
+        {
+          model,
+          signal: abortControllerRef.current.signal,
+        }
       );
 
       for await (const chunk of stream) {
@@ -239,14 +242,14 @@ export function useRecipeGeneration({
         apiError = ErrorService.createNetworkError();
       } else if (typeof error === 'object' && error !== null && 'status' in error) {
         const err = error as { status: number; body?: unknown };
-        apiError = ErrorService.parseAPIError(err.status, err.body, provider);
+        apiError = ErrorService.parseAPIError(err.status, err.body);
       } else {
         apiError = ErrorService.getError('UNKNOWN_ERROR');
       }
 
       setStatus({ state: 'error', error: apiError });
     }
-  }, [provider, apiKey, model, locale, chefProfile, chatHistory]);
+  }, [provider, apiKey, model, locale, chefProfile]);
 
   const retry = useCallback(() => {
     if (lastPromptRef.current) {

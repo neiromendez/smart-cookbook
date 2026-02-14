@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, ShoppingCart, Check, AlertCircle, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -23,25 +23,12 @@ export function MissingIngredientsDialog({
     const { i18n } = useTranslation();
     const lang = i18n.language as 'es' | 'en';
 
-    const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
-    const [pantryItems, setPantryItems] = useState<string[]>([]);
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [copied, setCopied] = useState(false);
-
-    useEffect(() => {
-        // 1. Cargar despensa
+    const [selectedIndices, setSelectedIndices] = useState<Set<number>>(() => {
         const pantry = StorageService.getPantry();
-        setPantryItems(pantry);
-
-        // 2. Identificar ingredientes faltantes (lógica simple de coincidencia)
         const missingIndices = new Set<number>();
 
         ingredients.forEach((ing, index) => {
-            // Normalización básica para comparación
             const ingName = ing.name.toLowerCase().trim();
-
-            // Verificar si alguna palabra clave del ingrediente está en la despensa
-            // Esto es heurístico
             const isPresent = pantry.some(pItem => {
                 const pName = pItem.toLowerCase().trim();
                 return pName.includes(ingName) || ingName.includes(pName);
@@ -52,8 +39,10 @@ export function MissingIngredientsDialog({
             }
         });
 
-        setSelectedIndices(missingIndices);
-    }, [ingredients]);
+        return missingIndices;
+    });
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const toggleSelection = (index: number) => {
         setSelectedIndices(prev => {

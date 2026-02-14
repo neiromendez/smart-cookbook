@@ -61,6 +61,7 @@ export class GoogleAdapter implements IAIProvider {
           { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
         ],
       }),
+      signal: options?.signal,
     });
 
     if (!response.ok) {
