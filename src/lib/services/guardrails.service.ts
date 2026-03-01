@@ -68,6 +68,112 @@ const CULINARY_KEYWORDS = [
   'dieta', 'diet', 'alergia', 'allergy', 'vegano', 'vegan', 'vegetariano', 'vegetarian',
 ];
 
+// Mapeo de restricciones concretas por tipo de dieta
+const DIET_RESTRICTIONS: Record<string, string[]> = {
+  vegan: [
+    'NEVER use any animal products: meat, fish, eggs, dairy, honey, gelatin',
+    'All ingredients MUST be 100% plant-based',
+  ],
+  vegetarian: [
+    'NEVER use meat or fish (including shellfish)',
+    'Eggs and dairy are allowed',
+  ],
+  keto: [
+    'Max 20g net carbs per serving',
+    'NO sugar, NO grains, NO starchy vegetables (potatoes, corn, peas)',
+    'Prioritize healthy fats, moderate protein',
+  ],
+  paleo: [
+    'NO grains, NO dairy, NO legumes, NO processed foods',
+    'Only whole, unprocessed ingredients: meat, fish, vegetables, fruits, nuts, seeds',
+  ],
+  'gluten-free': [
+    'NO wheat, barley, rye, or oats (unless certified gluten-free)',
+    'Check ALL sauces, seasonings, and processed ingredients for hidden gluten',
+  ],
+};
+
+// Mapeo de restricciones concretas por condicion de salud
+const HEALTH_CONDITION_RESTRICTIONS: Record<string, string[]> = {
+  diabetes: [
+    'Use low glycemic index ingredients',
+    'NO added sugar, limit refined carbs',
+    'Prefer whole grains, fiber-rich foods',
+  ],
+  hypertension: [
+    'Max 1500mg sodium per day — use minimal salt',
+    'NO cured meats, limit processed foods',
+    'Prefer herbs and spices for flavor instead of salt',
+  ],
+  'fatty liver': [
+    'NO fried foods, NO alcohol in cooking',
+    'Limit saturated fats, prefer plant-based oils in small amounts',
+    'Prioritize vegetables, lean proteins, whole grains',
+  ],
+  'high cholesterol': [
+    'Limit saturated fats, NO trans fats',
+    'Prefer plant-based oils (olive, avocado)',
+    'Include fiber-rich ingredients (oats, beans, vegetables)',
+  ],
+  celiac: [
+    'STRICT medical requirement — NEVER use wheat, barley, rye, or oats (even certified GF oats are risky)',
+    'Cross-contamination is a health risk: assume shared equipment has gluten unless stated otherwise',
+    'Check ALL sauces, seasonings, and processed ingredients — even small traces cause intestinal damage',
+  ],
+  'lactose intolerance': [
+    'NO dairy products (or use lactose-free alternatives)',
+    'If using a dairy substitute, mention it explicitly',
+  ],
+  gastritis: [
+    'NO spicy foods, NO citrus, NO caffeine',
+    'NO raw onion or garlic (cooked in small amounts is OK)',
+    'Avoid acidic ingredients (tomatoes, vinegar)',
+  ],
+  'kidney disease': [
+    'Limit potassium (bananas, potatoes, tomatoes)',
+    'Limit phosphorus (dairy, nuts, seeds)',
+    'Limit sodium and protein portions',
+  ],
+  gout: [
+    'Limit high-purine foods: NO organ meats, NO shellfish',
+    'Limit red meat, prefer chicken or plant proteins',
+    'Avoid alcohol-based cooking',
+  ],
+  ibs: [
+    'Follow low-FODMAP principles',
+    'Avoid garlic, onion, beans, wheat, excess dairy',
+    'Prefer easily digestible ingredients',
+  ],
+};
+
+// Aliases para normalizar nombres de condiciones (hyphens del onboarding + labels en español del ProfileManager)
+const CONDITION_ALIASES: Record<string, string> = {
+  // Hyphens del Onboarding → keys del mapa
+  'fatty-liver': 'fatty liver',
+  'high-cholesterol': 'high cholesterol',
+  'lactose-intolerance': 'lactose intolerance',
+  'kidney-disease': 'kidney disease',
+  // Labels en español del ProfileManager → keys del mapa
+  'hipertension': 'hypertension',
+  'hipertensión': 'hypertension',
+  'higado graso': 'fatty liver',
+  'hígado graso': 'fatty liver',
+  'colesterol alto': 'high cholesterol',
+  'celiaquía': 'celiac',
+  'celiaquia': 'celiac',
+  'intolerancia a la lactosa': 'lactose intolerance',
+  'enfermedad renal': 'kidney disease',
+  'colon irritable': 'ibs',
+  'síndrome de intestino irritable': 'ibs',
+  'gota': 'gout',
+};
+
+// Normaliza el nombre de una condicion para buscar en el mapa de restricciones
+function normalizeConditionKey(condition: string): string {
+  const normalized = condition.toLowerCase().trim().replace(/\s+/g, ' ');
+  return CONDITION_ALIASES[normalized] ?? normalized.replace(/-/g, ' ');
+}
+
 // Configuracion de limites
 const MAX_INPUT_LENGTH = 500;
 
@@ -210,7 +316,11 @@ class GuardrailsServiceClass {
     if (restrictions) sections.push(restrictions);
 
     // Formato de respuesta
-    sections.push(this.buildFormatSection(locale));
+    sections.push(this.buildFormatSection(profile, locale));
+
+    // Reminder final (repite restricciones criticas al final del prompt)
+    const reminder = this.buildReminderSection(profile);
+    if (reminder) sections.push(reminder);
 
     return sections.join('\n\n');
   }
@@ -253,45 +363,70 @@ RULES:
     parts.push(`- Skill: ${profile.skillLevel || 'home-cook'}`);
     if (profile.location) parts.push(`- Location: ${profile.location} (prioritize local ingredients)`);
     if (profile.diet !== 'any') parts.push(`- Diet: ${profile.diet}`);
-    if (profile.pantry?.length) parts.push(`- Pantry: ${profile.pantry.join(', ')}`);
+    if (profile.pantry?.length) {
+      const hasDietRestriction = profile.diet !== 'any' && profile.diet !== 'omnivore';
+      const caveat = hasDietRestriction ? ' (only if they comply with diet restrictions)' : '';
+      parts.push(`- Pantry (PRIORITIZE these ingredients${caveat}, user already has them): ${profile.pantry.join(', ')}`);
+    }
 
     return parts.join('\n');
   }
 
   /**
    * Sección de restricciones DINÁMICAS - solo se incluye si hay restricciones
+   * Incluye dieta, alergias, condiciones de salud y dislikes con restricciones concretas
    * Prompt siempre en inglés
    */
   private buildRestrictionsSection(profile: {
     allergies: string[];
     conditions: string[];
+    diet: string;
     dislikes?: string[];
   }): string | null {
     const hasAllergies = profile.allergies.length > 0;
     const hasConditions = profile.conditions.length > 0;
     const hasDislikes = profile.dislikes && profile.dislikes.length > 0;
+    const hasDiet = profile.diet !== 'any' && profile.diet !== 'omnivore';
 
-    if (!hasAllergies && !hasConditions && !hasDislikes) {
+    if (!hasAllergies && !hasConditions && !hasDislikes && !hasDiet) {
       return null;
     }
 
     const parts: string[] = [];
 
-    parts.push('⚠️ MANDATORY RESTRICTIONS:');
+    parts.push('⚠️ MANDATORY RESTRICTIONS (violating ANY of these is a critical failure):');
+
+    if (hasDiet) {
+      parts.push(`\n🥗 DIET RESTRICTION: ${profile.diet}`);
+      const dietRules = DIET_RESTRICTIONS[profile.diet.toLowerCase()];
+      if (dietRules) {
+        dietRules.forEach(rule => parts.push(`- ${rule}`));
+      } else {
+        parts.push(`- Follow ${profile.diet} diet guidelines strictly`);
+      }
+    }
 
     if (hasAllergies) {
-      parts.push(`\n🚨 ALLERGIES (NEVER use these ingredients): ${profile.allergies.join(', ')}`);
-      parts.push('- Check ALL ingredients for possible allergens');
+      parts.push(`\n🚨 ALLERGIES (NEVER use these — can cause anaphylaxis): ${profile.allergies.join(', ')}`);
+      parts.push('- Check ALL ingredients including sauces, seasonings, and garnishes for allergens');
       parts.push('- Mark with ⚠️ any ingredient that may contain traces');
+      parts.push('- When in doubt, EXCLUDE the ingredient');
     }
 
     if (hasConditions) {
-      parts.push(`\n⚕️ HEALTH CONDITIONS: ${profile.conditions.join(', ')}`);
-      parts.push('You MUST adapt the recipe for these conditions:');
-      parts.push('- Research which foods and cooking methods are CONTRAINDICATED for each condition');
-      parts.push('- DO NOT use harmful ingredients or techniques (e.g., frying for fatty liver, excess salt for hypertension)');
-      parts.push('- Prefer healthy methods: steaming, baking, grilling without oil, boiling');
-      parts.push('- In "Chef\'s Tip" explain the adaptations made');
+      parts.push(`\n⚕️ HEALTH CONDITIONS — specific restrictions per condition:`);
+      for (const condition of profile.conditions) {
+        const conditionKey = normalizeConditionKey(condition);
+        const rules = HEALTH_CONDITION_RESTRICTIONS[conditionKey];
+        if (rules) {
+          parts.push(`\n  ${condition.toUpperCase()}:`);
+          rules.forEach(rule => parts.push(`  - ${rule}`));
+        } else {
+          parts.push(`\n  ${condition.toUpperCase()}: Research and avoid foods CONTRAINDICATED for this condition`);
+        }
+      }
+      parts.push('\n- Prefer healthy methods: steaming, baking, grilling without oil, boiling');
+      parts.push('- In "Chef\'s Tip" explain the health adaptations made');
     }
 
     if (hasDislikes) {
@@ -305,8 +440,12 @@ RULES:
   /**
    * Sección de formato de respuesta
    * Los labels se traducen según el locale
+   * La seccion Notices es obligatoria si hay alergias o condiciones de salud
    */
-  private buildFormatSection(locale: 'en' | 'es'): string {
+  private buildFormatSection(profile: {
+    allergies: string[];
+    conditions: string[];
+  }, locale: 'en' | 'es'): string {
     const labels = locale === 'es'
       ? {
           prep: 'Preparación',
@@ -327,6 +466,11 @@ RULES:
           notices: 'Notices',
         };
 
+    const hasHealthRestrictions = profile.allergies.length > 0 || profile.conditions.length > 0;
+    const noticesInstruction = hasHealthRestrictions
+      ? '[MANDATORY — List ALL potential allergens present in the recipe and explain health condition adaptations made]'
+      : '[Only if there are relevant allergens or adaptations to mention]';
+
     return `📝 RESPONSE FORMAT (use this exact structure):
 
 ## 🍽️ [Recipe Title]
@@ -342,7 +486,47 @@ RULES:
 [Personalized tip]
 
 ### ⚠️ ${labels.notices}
-[Only if there are allergens or health condition adaptations]`;
+${noticesInstruction}`;
+  }
+
+  /**
+   * Reminder final que repite las restricciones criticas al final del prompt
+   * Los LLMs dan mas peso al inicio y final del contexto
+   */
+  private buildReminderSection(profile: {
+    allergies: string[];
+    conditions: string[];
+    diet: string;
+    dislikes?: string[];
+  }): string | null {
+    const hasAllergies = profile.allergies.length > 0;
+    const hasConditions = profile.conditions.length > 0;
+    const hasDislikes = profile.dislikes && profile.dislikes.length > 0;
+    const hasDiet = profile.diet !== 'any' && profile.diet !== 'omnivore';
+
+    if (!hasAllergies && !hasConditions && !hasDislikes && !hasDiet) {
+      return null;
+    }
+
+    const checks: string[] = [];
+
+    if (hasAllergies) {
+      checks.push(`- ❌ NO allergens: [${profile.allergies.join(', ')}]`);
+    }
+    if (hasDislikes) {
+      checks.push(`- ❌ NO dislikes: [${profile.dislikes!.join(', ')}]`);
+    }
+    if (hasDiet) {
+      checks.push(`- ✅ Diet: ${profile.diet} — every ingredient must comply`);
+    }
+    if (hasConditions) {
+      checks.push(`- ✅ Adapted for: [${profile.conditions.join(', ')}]`);
+    }
+    if (hasAllergies || hasConditions) {
+      checks.push('- ✅ Always include ⚠️ Notices section listing allergens and adaptations');
+    }
+
+    return `🔒 FINAL CHECK — Before responding, verify EVERY item:\n${checks.join('\n')}`;
   }
 
   /**
@@ -391,6 +575,7 @@ RULES:
 
   /**
    * Sección de restricciones para IDEAS (dinámico)
+   * Incluye restricciones concretas por dieta y condicion de salud
    * Prompt siempre en inglés
    */
   private buildIdeasRestrictionsSection(profile: {
@@ -398,37 +583,55 @@ RULES:
     conditions: string[];
     dislikes?: string[];
     diet: string;
+    pantry?: string[];
   }): string | null {
     const hasAllergies = profile.allergies.length > 0;
     const hasConditions = profile.conditions.length > 0;
     const hasDislikes = profile.dislikes && profile.dislikes.length > 0;
-    const hasDiet = profile.diet !== 'any';
+    const hasDiet = profile.diet !== 'any' && profile.diet !== 'omnivore';
+    const hasPantry = profile.pantry && profile.pantry.length > 0;
 
-    if (!hasAllergies && !hasConditions && !hasDislikes && !hasDiet) {
+    if (!hasAllergies && !hasConditions && !hasDislikes && !hasDiet && !hasPantry) {
       return null;
     }
 
     const parts: string[] = [];
 
-    parts.push('⚠️ RESTRICTIONS (ideas must respect these):');
+    parts.push('⚠️ MANDATORY RESTRICTIONS (ALL ideas must comply):');
+
+    if (hasDiet) {
+      parts.push(`\n🥗 DIET: ${profile.diet}`);
+      const dietRules = DIET_RESTRICTIONS[profile.diet.toLowerCase()];
+      if (dietRules) {
+        dietRules.forEach(rule => parts.push(`   - ${rule}`));
+      } else {
+        parts.push(`   - Follow ${profile.diet} diet guidelines strictly`);
+      }
+    }
 
     if (hasAllergies) {
-      parts.push(`🚨 ALLERGIES - DO NOT suggest recipes with: ${profile.allergies.join(', ')}`);
+      parts.push(`\n🚨 ALLERGIES — NEVER suggest recipes containing: ${profile.allergies.join(', ')}`);
     }
 
     if (hasConditions) {
-      parts.push(`⚕️ HEALTH CONDITIONS: ${profile.conditions.join(', ')}`);
-      parts.push('   → Only suggest ideas with HEALTHY preparations for these conditions');
-      parts.push('   → Avoid frying, excess fats/sodium/sugar as applicable');
+      parts.push(`\n⚕️ HEALTH CONDITIONS — only suggest ideas safe for:`);
+      for (const condition of profile.conditions) {
+        const conditionKey = normalizeConditionKey(condition);
+        const rules = HEALTH_CONDITION_RESTRICTIONS[conditionKey];
+        if (rules) {
+          parts.push(`   ${condition}: ${rules.join(' | ')}`);
+        } else {
+          parts.push(`   ${condition}: avoid contraindicated foods`);
+        }
+      }
     }
 
     if (hasDislikes) {
-      parts.push(`🚫 DISLIKES (DO NOT use these ingredients): ${profile.dislikes!.join(', ')}`);
-      parts.push('   → If using a substitute, clarify it in the title or description (e.g., "lettuce wraps" instead of just "tacos")');
+      parts.push(`\n🚫 DISLIKES — DO NOT use: ${profile.dislikes!.join(', ')}`);
     }
 
-    if (hasDiet) {
-      parts.push(`🥗 DIET: ${profile.diet}`);
+    if (hasPantry) {
+      parts.push(`\n🏠 PANTRY (PRIORITIZE these ingredients): ${profile.pantry!.join(', ')}`);
     }
 
     return parts.join('\n');
