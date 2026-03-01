@@ -51,6 +51,7 @@ export class OpenRouterAdapter implements IAIProvider {
         temperature: options?.temperature || 0.7,
         stream: true,
       }),
+      signal: options?.signal,
     });
 
     if (!response.ok) {

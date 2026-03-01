@@ -25,7 +25,7 @@ function parseAmount(amountStr: string): { value: number; unit: string } {
         return { value: 0, unit: amountStr }; // Return raw string if not parsable
     }
 
-    let valueStr = match[1];
+    const valueStr = match[1];
     let value = 0;
 
     // Handle fractions like "1/2"

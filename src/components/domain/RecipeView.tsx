@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -18,6 +18,8 @@ import {
   Timer,
   Lightbulb,
   X,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -50,6 +52,27 @@ export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps)
   const [activeTimer, setActiveTimer] = useState<{ label: string; seconds: number; total: number } | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isChefModeOpen, setIsChefModeOpen] = useState(false);
+  const [portionMultiplier, setPortionMultiplier] = useState(1);
+
+  // Calculates scaled portion count
+  const scaledServings = Math.round(recipe.servings * portionMultiplier * 10) / 10;
+
+  // Utility to scale an amount string
+  const scaleAmount = (amountStr: string): string => {
+    if (portionMultiplier === 1) return amountStr;
+    const match = amountStr.match(/^([\d./]+)\s*(.*)$/);
+    if (!match) return amountStr;
+    let value = parseFloat(match[1]);
+    if (match[1].includes('/')) {
+      const [num, den] = match[1].split('/').map(Number);
+      value = num / den;
+    }
+    const scaled = Math.round(value * portionMultiplier * 100) / 100;
+    const unit = match[2] || '';
+    // Format nicely
+    const formatted = scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(2).replace(/\.?0+$/, '');
+    return `${formatted}${unit ? ' ' + unit : ''}`;
+  };
 
   const toggleStep = (index: number) => {
     setCompletedSteps(prev => {
@@ -125,7 +148,7 @@ export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps)
               </div>
               <div className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
-                <span>{recipe.servings} {lang === 'es' ? 'porciones' : 'servings'}</span>
+                <span>{scaledServings} {lang === 'es' ? 'porciones' : 'servings'}</span>
               </div>
               {recipe.nutrients && (
                 <div className="flex items-center gap-1">
@@ -257,12 +280,46 @@ export function RecipeView({ recipe, onClose, onAddToHistory }: RecipeViewProps)
 
         {/* Ingredientes */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-            📦 {lang === 'es' ? 'Ingredientes' : 'Ingredients'}
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              📦 {lang === 'es' ? 'Ingredientes' : 'Ingredients'}
+            </h3>
+            {/* Portion Scaler */}
+            <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 px-3 py-1.5 rounded-full border border-orange-200 dark:border-orange-800">
+              <button
+                onClick={() => setPortionMultiplier(prev => Math.max(0.25, Math.round((prev - 0.25) * 100) / 100))}
+                disabled={portionMultiplier <= 0.25}
+                className="p-1 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900 text-orange-600 dark:text-orange-400 disabled:opacity-30 transition-colors"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <input
+                type="number"
+                min="0.25"
+                max="10"
+                step="0.25"
+                value={portionMultiplier}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  if (!isNaN(val) && val >= 0.25 && val <= 10) {
+                    setPortionMultiplier(val);
+                  }
+                }}
+                className="w-12 text-center text-sm font-bold bg-transparent text-orange-600 dark:text-orange-400 focus:outline-none"
+              />
+              <span className="text-xs text-orange-500 dark:text-orange-400">x</span>
+              <button
+                onClick={() => setPortionMultiplier(prev => Math.min(10, Math.round((prev + 0.25) * 100) / 100))}
+                disabled={portionMultiplier >= 10}
+                className="p-1 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900 text-orange-600 dark:text-orange-400 disabled:opacity-30 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {recipe.ingredients.map((ingredient, index) => (
-              <IngredientItem key={index} ingredient={ingredient} />
+              <IngredientItem key={index} ingredient={{ ...ingredient, amount: scaleAmount(ingredient.amount) }} />
             ))}
           </div>
         </div>
@@ -431,21 +488,24 @@ interface TimerOverlayProps {
 
 function TimerOverlay({ timer, onClose, onTick, lang }: TimerOverlayProps) {
   // Timer effect
-  useState(() => {
+  useEffect(() => {
+    if (timer.seconds <= 0) return;
+
     const interval = setInterval(() => {
-      if (timer.seconds > 0) {
-        onTick(timer.seconds - 1);
-      } else {
-        // Notificar
-        if (typeof window !== 'undefined') {
-          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-          audio.play().catch(() => { });
-        }
-      }
+      onTick(Math.max(timer.seconds - 1, 0));
     }, 1000);
 
     return () => clearInterval(interval);
-  });
+  }, [timer.seconds, onTick]);
+
+  useEffect(() => {
+    if (timer.seconds !== 0) return;
+
+    if (typeof window !== 'undefined') {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      audio.play().catch(() => { });
+    }
+  }, [timer.seconds]);
 
   const minutes = Math.floor(timer.seconds / 60);
   const seconds = timer.seconds % 60;

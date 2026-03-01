@@ -51,7 +51,7 @@ export class GoogleAdapter implements IAIProvider {
           },
         ],
         generationConfig: {
-          maxOutputTokens: options?.maxTokens || 2048,
+          maxOutputTokens: options?.maxTokens || 8192,
           temperature: options?.temperature || 0.7,
         },
         safetySettings: [
@@ -61,6 +61,7 @@ export class GoogleAdapter implements IAIProvider {
           { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
         ],
       }),
+      signal: options?.signal,
     });
 
     if (!response.ok) {
@@ -201,9 +202,11 @@ export class GoogleAdapter implements IAIProvider {
 
   private getDefaultModels(): ModelInfo[] {
     return [
-      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', contextWindow: 1000000, maxOutputTokens: 8192, isFree: true },
       { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', contextWindow: 1000000, maxOutputTokens: 65536, isFree: true },
+      { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', contextWindow: 1000000, maxOutputTokens: 65536, isFree: true },
       { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', contextWindow: 2000000, maxOutputTokens: 65536, isFree: true },
+      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', contextWindow: 1000000, maxOutputTokens: 8192, isFree: true },
+      { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', contextWindow: 1000000, maxOutputTokens: 65536, isFree: true },
     ];
   }
 

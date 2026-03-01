@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, Utensils, Leaf, Zap, Heart, Drumstick, Trash2, RefreshCw, Users, AlertCircle, ChevronDown, ChevronUp, BookOpen, Clock, ShoppingCart, Info, RotateCcw, Timer, Minus, Maximize2, Lightbulb, Sparkles } from 'lucide-react';
+import { X, Utensils, Leaf, Zap, Heart, Drumstick, Trash2, RefreshCw, Users, AlertCircle, ChevronDown, ChevronUp, BookOpen, Clock, ShoppingCart, Timer, Minus, Maximize2, Lightbulb } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -81,6 +81,7 @@ export function RecipeGenerator({
 
   const [displayedRecipe, setDisplayedRecipe] = useState<Recipe | null>(null); // Receta del historial a mostrar
   const [missingIngDialog, setMissingIngDialog] = useState<{ isOpen: boolean; ingredients: { name: string; amount?: string }[] }>({ isOpen: false, ingredients: [] });
+  const timerIdRef = useRef(0);
 
   // Obtener API key y modelo seleccionado del proveedor
   const providerKey = apiKeys.find(k => k.provider === selectedProvider);
@@ -122,10 +123,7 @@ export function RecipeGenerator({
   });
 
   // Obtener recetas del historial para verificar cuales prompts generaron recetas
-  const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-  useEffect(() => {
-    setSavedRecipes(StorageService.getHistory());
-  }, [status.state]); // Actualizar cuando cambia el estado (por si se genero una nueva receta)
+  const savedRecipes = StorageService.getHistory();
 
   // Verificar si un mensaje de usuario genero una receta
   const hasRecipeForPrompt = (promptId: string): boolean => {
@@ -135,15 +133,19 @@ export function RecipeGenerator({
   // Efecto para cargar receta del historial
   useEffect(() => {
     if (loadedRecipe) {
-      setDisplayedRecipe(loadedRecipe);
-      // Rellenar el formulario con los ingredientes de la receta
-      const ingredientNames = loadedRecipe.ingredients.map(i => i.name).join(', ');
-      setIngredients(ingredientNames);
-      setServings(loadedRecipe.servings);
-      // Notificar que se ha cargado
-      if (onRecipeLoaded) {
-        onRecipeLoaded();
-      }
+      const loadRecipeTimeoutId = window.setTimeout(() => {
+        setDisplayedRecipe(loadedRecipe);
+        // Rellenar el formulario con los ingredientes de la receta
+        const ingredientNames = loadedRecipe.ingredients.map(i => i.name).join(', ');
+        setIngredients(ingredientNames);
+        setServings(loadedRecipe.servings);
+        // Notificar que se ha cargado
+        if (onRecipeLoaded) {
+          onRecipeLoaded();
+        }
+      }, 0);
+
+      return () => window.clearTimeout(loadRecipeTimeoutId);
     }
   }, [loadedRecipe, onRecipeLoaded]);
 
@@ -177,13 +179,18 @@ export function RecipeGenerator({
     if (status.state === 'completed' && chatHistory.length > 0) {
       const lastMsg = chatHistory[chatHistory.length - 1];
       if (lastMsg.role === 'assistant') {
-        setExpandedMessages(prev => ({ ...prev, [lastMsg.id]: true }));
+        const expandMessageTimeoutId = window.setTimeout(() => {
+          setExpandedMessages(prev => ({ ...prev, [lastMsg.id]: true }));
+        }, 0);
+
+        return () => window.clearTimeout(expandMessageTimeoutId);
       }
     }
   }, [status.state, chatHistory]);
 
   const addTimer = (minutes: number, label: string) => {
-    const id = Date.now().toString() + Math.random().toString();
+    timerIdRef.current += 1;
+    const id = `timer-${timerIdRef.current}`;
 
     setActiveTimers(prev => [
       ...prev,
@@ -426,7 +433,7 @@ export function RecipeGenerator({
       // Verificar si es un item de lista
       if (/^[-*•]\s+/.test(trimmed) || /^\d+\.\s+/.test(trimmed)) {
         // Limpiar el prefijo de lista
-        let cleaned = trimmed.replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '').trim();
+        const cleaned = trimmed.replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '').trim();
 
         // 1. Extraer cantidad si está entre paréntesis al final "(500g)"
         const parenMatch = cleaned.match(/\(([^)]+)\)\s*$/);
@@ -489,7 +496,7 @@ export function RecipeGenerator({
         if (minutes <= 0 || minutes > 720) continue; // Ignorar valores inválidos (max 12 horas)
 
         // Extraer contexto de la línea
-        let label = extractLabelFromLine(line, match.index);
+        const label = extractLabelFromLine(line);
 
         // Crear key única para evitar duplicados
         const key = `${minutes}-${label}`;
@@ -509,9 +516,9 @@ export function RecipeGenerator({
   };
 
   // Extrae un label significativo de una línea de texto
-  const extractLabelFromLine = (line: string, matchIndex: number): string => {
+  const extractLabelFromLine = (line: string): string => {
     // Limpiar la línea de markdown
-    let cleanLine = line
+    const cleanLine = line
       .replace(/^[\d.)\-*#]+\s*/, '') // Remover numeración de lista y headers
       .replace(/\*\*/g, '') // Remover negritas
       .replace(/\*/g, '') // Remover itálicas
@@ -539,7 +546,7 @@ export function RecipeGenerator({
 
     // Si no encontramos verbo, tomar toda la línea limpia
     // Remover solo la parte del tiempo en minutos
-    let label = cleanLine.replace(/\s*(?:por|durante|for|about|around)?\s*\d+\s*(minutos?|minutes?|min)\b[.,]?/gi, '').trim();
+    const label = cleanLine.replace(/\s*(?:por|durante|for|about|around)?\s*\d+\s*(minutos?|minutes?|min)\b[.,]?/gi, '').trim();
     if (label.length > 3) {
       return label.charAt(0).toUpperCase() + label.slice(1);
     }
@@ -547,8 +554,7 @@ export function RecipeGenerator({
     return lang === 'es' ? 'Cronómetro' : 'Timer';
   };
 
-  // Componente para mostrar los timers extraídos
-  const TimerButtons = ({ content }: { content: string }) => {
+  const renderTimerButtons = (content: string) => {
     const timers = extractTimersFromText(content);
 
     if (timers.length === 0) return null;
@@ -806,6 +812,7 @@ export function RecipeGenerator({
       <AnimatePresence>
         {ideasStatus.state === 'error' && (
           <ErrorCard
+            key={`ideas-error-${ideasStatus.error.code}-${selectedProvider}`}
             error={ideasStatus.error}
             onRetry={() => handleGenerateIdeas({ preventDefault: () => { } } as React.FormEvent)}
             onSwitchProvider={handleSwitchProvider}
@@ -847,6 +854,7 @@ export function RecipeGenerator({
       <AnimatePresence>
         {status.state === 'error' && (
           <ErrorCard
+            key={`recipe-error-${status.error.code}-${selectedProvider}`}
             error={status.error}
             onRetry={retry}
             onSwitchProvider={handleSwitchProvider}
@@ -933,7 +941,7 @@ export function RecipeGenerator({
 
                               {/* Barra de Timers extraídos del contenido - con separación */}
                               <div className="mt-4">
-                                <TimerButtons content={msg.content} />
+                                {renderTimerButtons(msg.content)}
                               </div>
 
                               <div className="recipe-content prose prose-sm dark:prose-invert max-w-none mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
@@ -966,7 +974,7 @@ export function RecipeGenerator({
                   </span>
                 </div>
                 {/* Mostrar timers mientras se genera */}
-                <TimerButtons content={recipe} />
+                {renderTimerButtons(recipe)}
                 <div className="prose prose-orange dark:prose-invert max-w-none mt-4">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {recipe}

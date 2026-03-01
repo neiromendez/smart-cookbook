@@ -97,7 +97,6 @@
       "google": "Unlimited free, no card required",
       "groq": "Ultra-fast (300 tok/s), no card required",
       "huggingface": "Free serverless API, open-source models",
-      "opencode": "Free models like GPT-5 Nano and Fast One",
       "openrouter": "$5 credits + 20+ free models"
     },
     "missingKey": {
@@ -125,7 +124,13 @@
     "validationError": {
       "invalid": "Invalid API key. Please verify it is correct.",
       "error": "Validation error. Please try again."
-    }
+    },
+    "noCreditCard": "No credit card required",
+    "model": "Model:",
+    "selectModel": "Select...",
+    "modelHint": "Available models for {{provider}}",
+    "freeModelHint": "All these models are free on {{provider}}",
+    "apiKeyPlaceholder": "Paste your API key here..."
   },
   "profile": {
     "title": "Your Chef Profile",

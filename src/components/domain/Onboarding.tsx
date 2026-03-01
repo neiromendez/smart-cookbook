@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChefHat,
@@ -96,7 +97,6 @@ const SKILL_LEVELS = [
 
 export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
   const { t, i18n } = useTranslation();
-  const lang = i18n.language as 'es' | 'en';
 
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [customAllergyInput, setCustomAllergyInput] = useState('');
@@ -375,7 +375,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} />
               </motion.div>
             )}
 
@@ -427,7 +427,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   ))}
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} />
               </motion.div>
             )}
 
@@ -541,7 +541,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 )}
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} />
               </motion.div>
             )}
 
@@ -654,7 +654,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </p>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} />
               </motion.div>
             )}
 
@@ -715,7 +715,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   })}
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} />
               </motion.div>
             )}
 
@@ -791,7 +791,7 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
                   </div>
                 </div>
 
-                <NavigationButtons onPrev={prevStep} onNext={nextStep} lang={lang} t={t} nextLabel={t('onboarding.complete.finish')} />
+                <NavigationButtons onPrev={prevStep} onNext={nextStep} t={t} nextLabel={t('onboarding.complete.finish')} />
               </motion.div>
             )}
 
@@ -918,12 +918,11 @@ export function Onboarding({ onComplete, onSkip }: OnboardingProps) {
 interface NavigationButtonsProps {
   onPrev: () => void;
   onNext: () => void;
-  lang: 'es' | 'en';
-  t: any;
+  t: TFunction;
   nextLabel?: string;
 }
 
-function NavigationButtons({ onPrev, onNext, lang, t, nextLabel }: NavigationButtonsProps) {
+function NavigationButtons({ onPrev, onNext, t, nextLabel }: NavigationButtonsProps) {
   return (
     <div className="flex gap-3">
       <Button variant="outline" onClick={onPrev} className="flex-1" icon={<ArrowLeft className="h-4 w-4" />}>

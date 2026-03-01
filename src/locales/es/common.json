@@ -97,7 +97,6 @@
       "google": "Ilimitado gratis, sin tarjeta",
       "groq": "Ultra-rápido (300 tok/s), sin tarjeta",
       "huggingface": "Serverless API gratuita, modelos open-source",
-      "opencode": "Modelos free como GPT-5 Nano y Fast One",
       "openrouter": "$5 créditos + 20+ modelos gratis"
     },
     "missingKey": {
@@ -125,7 +124,13 @@
     "validationError": {
       "invalid": "API key inválida. Verifica que sea correcta.",
       "error": "Error al validar. Intenta de nuevo."
-    }
+    },
+    "noCreditCard": "Sin tarjeta de crédito",
+    "model": "Modelo:",
+    "selectModel": "Seleccionar...",
+    "modelHint": "Modelos disponibles para {{provider}}",
+    "freeModelHint": "Todos estos modelos son gratuitos en {{provider}}",
+    "apiKeyPlaceholder": "Pega tu API key aquí..."
   },
   "profile": {
     "title": "Tu Perfil de Chef",

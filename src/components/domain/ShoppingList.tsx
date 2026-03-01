@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,9 +9,7 @@ import {
   Plus,
   Check,
   X,
-  Share2,
   CheckCircle,
-  Circle,
   Copy,
   ChefHat,
   ChevronDown,
@@ -81,7 +79,10 @@ function ProgressRing({ completion }: { completion: number }) {
 export function ShoppingList({ onClose }: ShoppingListProps) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as 'es' | 'en';
-  const [items, setItems] = useState<Ingredient[]>([]);
+  const [items, setItems] = useState<Ingredient[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return StorageService.getShoppingList();
+  });
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
   const [activeTab, setActiveTab] = useState<'recipe' | 'consolidated'>('recipe');
   const [newItemName, setNewItemName] = useState('');
@@ -89,18 +90,15 @@ export function ShoppingList({ onClose }: ShoppingListProps) {
   const [selectedUnit, setSelectedUnit] = useState('unit');
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [copiedRecipe, setCopiedRecipe] = useState<string | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-
-  // Cargar items del storage
-  useEffect(() => {
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
     const storedItems = StorageService.getShoppingList();
-    setItems(storedItems);
     const allGroups = new Set<string>();
     storedItems.forEach(item => {
       allGroups.add(item.recipeTitle || t('shoppingList.views.recipe'));
     });
-    setExpandedGroups(allGroups);
-  }, [t]);
+    return allGroups;
+  });
 
   const toggleGroup = useCallback((recipeTitle: string) => {
     setExpandedGroups(prev => {
@@ -137,8 +135,8 @@ export function ShoppingList({ onClose }: ShoppingListProps) {
   }, [items]);
 
   const handleAddItem = useCallback(() => {
-    let name = newItemName.trim();
-    let quantity = newItemQuantity.trim();
+    const name = newItemName.trim();
+    const quantity = newItemQuantity.trim();
 
     if (!name) return;
 

@@ -8,7 +8,6 @@ import { googleAdapter } from './google.adapter';
 import { cerebrasAdapter } from './cerebras.adapter';
 import { xaiAdapter } from './xai.adapter';
 import { deepseekAdapter } from './deepseek.adapter';
-import { opencodeAdapter } from './opencode.adapter';
 import { openaiAdapter } from './openai.adapter';
 import { anthropicAdapter } from './anthropic.adapter';
 import { huggingfaceAdapter } from './huggingface.adapter';
@@ -23,7 +22,6 @@ export { googleAdapter } from './google.adapter';
 export { cerebrasAdapter } from './cerebras.adapter';
 export { xaiAdapter } from './xai.adapter';
 export { deepseekAdapter } from './deepseek.adapter';
-export { opencodeAdapter } from './opencode.adapter';
 export { openaiAdapter } from './openai.adapter';
 export { anthropicAdapter } from './anthropic.adapter';
 export { huggingfaceAdapter } from './huggingface.adapter';
@@ -39,7 +37,6 @@ const adapters: Record<string, IAIProvider> = {
   cerebras: cerebrasAdapter,
   xai: xaiAdapter,
   deepseek: deepseekAdapter,
-  opencode: opencodeAdapter,
   openai: openaiAdapter,
   anthropic: anthropicAdapter,
   huggingface: huggingfaceAdapter,

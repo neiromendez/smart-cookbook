@@ -66,6 +66,7 @@ export interface AIProviderConfig {
   name: string;
   baseUrl: string;
   isFree: boolean;
+  isFast?: boolean; // Proveedores con inferencia ultra-rapida
   freeModels?: string[];
   documentation: string;
   dashboardUrl: string;
@@ -83,6 +84,7 @@ export interface AIProviderKey {
 export interface ModelInfo {
   id: string;
   name: string;
+  vendor?: string; // Nombre del vendor para agrupamiento en el selector
   contextWindow: number;
   maxOutputTokens: number; // Maximo de tokens que puede generar en una respuesta
   isFree: boolean;

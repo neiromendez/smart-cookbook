@@ -8,6 +8,7 @@ export interface GenerateOptions {
   maxTokens?: number;
   temperature?: number;
   stream?: boolean;
+  signal?: AbortSignal;
 }
 
 export interface StreamChunk {
@@ -49,6 +50,7 @@ export const AI_PROVIDERS: Record<string, AIProviderConfig> = {
     name: 'Cerebras',
     baseUrl: 'https://api.cerebras.ai/v1',
     isFree: true,
+    isFast: true,
     freeModels: [
       // Llama 4 (~2600 tok/s)
       'llama-4-scout-17b-16e',
@@ -89,6 +91,7 @@ export const AI_PROVIDERS: Record<string, AIProviderConfig> = {
     name: 'Groq',
     baseUrl: 'https://api.groq.com/openai/v1',
     isFree: true,
+    isFast: true,
     freeModels: [
       // Llama 4
       'meta-llama/llama-4-scout-17b-16e-instruct',
@@ -191,6 +194,7 @@ export const AI_PROVIDERS: Record<string, AIProviderConfig> = {
     name: 'Fireworks AI',
     baseUrl: 'https://api.fireworks.ai/inference/v1',
     isFree: false,
+    isFast: true,
     documentation: 'https://docs.fireworks.ai/',
     dashboardUrl: 'https://fireworks.ai/account/api-keys',
     requiresCors: true,
@@ -215,20 +219,6 @@ export const AI_PROVIDERS: Record<string, AIProviderConfig> = {
     documentation: 'https://platform.openai.com/docs',
     dashboardUrl: 'https://platform.openai.com/api-keys',
     requiresCors: true, // OpenAI NO soporta CORS desde browser
-  },
-
-  opencode: {
-    id: 'opencode',
-    name: 'OpenCode AI',
-    baseUrl: 'https://opencode.ai/api/v1',
-    isFree: false,
-    freeModels: [
-      'opencode/fast-one',
-      'opencode/gpt-5-nano',
-    ],
-    documentation: 'https://opencode.ai/docs',
-    dashboardUrl: 'https://github.com/neiromendez/smart-cookbook',
-    requiresCors: true,
   },
 
   together: {

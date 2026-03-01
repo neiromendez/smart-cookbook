@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -56,19 +56,18 @@ export function RecipeHistory({ onClose, onLoadRecipe }: RecipeHistoryProps) {
   const { i18n } = useTranslation();
   const lang = i18n.language as 'es' | 'en';
 
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return StorageService.getHistory();
+  });
+  const [chatHistory] = useState<ChatMessage[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return StorageService.getChatHistory();
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all');
   const [servingsFilter, setServingsFilter] = useState<ServingsFilter>('all');
-
-  useEffect(() => {
-    const storedRecipes = StorageService.getHistory();
-    const storedChat = StorageService.getChatHistory();
-    setRecipes(storedRecipes);
-    setChatHistory(storedChat);
-  }, []);
 
   const getPromptForRecipe = useCallback((recipe: Recipe): string | null => {
     if (!recipe.promptId) return null;

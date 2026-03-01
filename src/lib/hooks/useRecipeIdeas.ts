@@ -176,7 +176,10 @@ export function useRecipeIdeas({
         systemPrompt,
         userPrompt,
         apiKey,
-        { model }
+        {
+          model,
+          signal: abortControllerRef.current.signal,
+        }
       );
 
       for await (const chunk of stream) {
@@ -242,7 +245,7 @@ export function useRecipeIdeas({
         apiError = ErrorService.createNetworkError();
       } else if (typeof error === 'object' && error !== null && 'status' in error) {
         const err = error as { status: number; body?: unknown };
-        apiError = ErrorService.parseAPIError(err.status, err.body, provider);
+        apiError = ErrorService.parseAPIError(err.status, err.body);
       } else {
         apiError = ErrorService.getError('UNKNOWN_ERROR');
       }

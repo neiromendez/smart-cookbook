@@ -37,7 +37,7 @@ npm install
 # Ejecutar en desarrollo
 npm run dev
 
-# Abrir http://localhost:3000
+# Abrir http://localhost:5551
 ```
 
 ## 🤖 Proveedores de IA Soportados

@@ -17,11 +17,13 @@ const ALLOWED_PROVIDERS = [
   'together',
   'fireworks',
   'mistral',
+  'deepseek',
+  'xai',
   'huggingface',
 ];
 
 // URLs base permitidas (whitelist de seguridad)
-const ALLOWED_BASE_URLS = [
+const ALLOWED_HOSTS = [
   'api.groq.com',
   'generativelanguage.googleapis.com',
   'api.cerebras.ai',
@@ -30,8 +32,30 @@ const ALLOWED_BASE_URLS = [
   'api.together.xyz',
   'api.fireworks.ai',
   'api.mistral.ai',
+  'api.deepseek.com',
+  'api.x.ai',
   'api-inference.huggingface.co',
+  'huggingface.co',
 ];
+
+const PROVIDER_ALLOWED_HOSTS: Record<string, string[]> = {
+  groq: ['api.groq.com'],
+  google: ['generativelanguage.googleapis.com'],
+  cerebras: ['api.cerebras.ai'],
+  openai: ['api.openai.com'],
+  anthropic: ['api.anthropic.com'],
+  together: ['api.together.xyz'],
+  fireworks: ['api.fireworks.ai'],
+  mistral: ['api.mistral.ai'],
+  deepseek: ['api.deepseek.com'],
+  xai: ['api.x.ai'],
+  huggingface: ['api-inference.huggingface.co', 'huggingface.co'],
+};
+
+function isAllowedHost(hostname: string): boolean {
+  const normalizedHostname = hostname.toLowerCase();
+  return ALLOWED_HOSTS.includes(normalizedHostname);
+}
 
 /**
  * POST /api/ai/proxy
@@ -75,13 +99,23 @@ export async function POST(request: NextRequest) {
 
     // Validar URL (seguridad)
     const url = new URL(targetUrl);
-    const isAllowedUrl = ALLOWED_BASE_URLS.some(base => url.hostname.includes(base));
+    const isAllowedUrl = url.protocol === 'https:' && isAllowedHost(url.hostname);
 
     if (!isAllowedUrl) {
       return NextResponse.json(
         { error: { message: 'Target URL not in whitelist' } },
         { status: 403 }
       );
+    }
+
+    if (provider) {
+      const providerHosts = PROVIDER_ALLOWED_HOSTS[provider];
+      if (!providerHosts || !providerHosts.includes(url.hostname.toLowerCase())) {
+        return NextResponse.json(
+          { error: { message: `Target URL not allowed for provider ${provider}` } },
+          { status: 403 }
+        );
+      }
     }
 
     // Construir headers para el proveedor
@@ -175,13 +209,23 @@ export async function GET(request: NextRequest) {
 
     // Validar URL
     const url = new URL(targetUrl);
-    const isAllowedUrl = ALLOWED_BASE_URLS.some(base => url.hostname.includes(base));
+    const isAllowedUrl = url.protocol === 'https:' && isAllowedHost(url.hostname);
 
     if (!isAllowedUrl) {
       return NextResponse.json(
         { error: { message: 'Target URL not in whitelist' } },
         { status: 403 }
       );
+    }
+
+    if (provider) {
+      const providerHosts = PROVIDER_ALLOWED_HOSTS[provider];
+      if (!providerHosts || !providerHosts.includes(url.hostname.toLowerCase())) {
+        return NextResponse.json(
+          { error: { message: `Target URL not allowed for provider ${provider}` } },
+          { status: 403 }
+        );
+      }
     }
 
     const headers: HeadersInit = {};
@@ -225,7 +269,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Target-URL, X-API-Key, X-Provider',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Target-URL, X-API-Key, X-Provider, X-Anthropic-Version',
       'Access-Control-Max-Age': '86400',
     },
   });

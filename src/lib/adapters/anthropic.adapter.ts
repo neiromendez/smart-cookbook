@@ -18,7 +18,7 @@ import {
  */
 class AnthropicAdapter implements IAIProvider {
   readonly config: AIProviderConfig = AI_PROVIDERS.anthropic;
-  readonly defaultModel = 'claude-sonnet-4-20250514'; // Claude 4 Sonnet - balance precio/rendimiento
+  readonly defaultModel = 'claude-sonnet-4-6'; // Claude Sonnet 4.6 - balance precio/rendimiento
 
   getEndpointUrl(): string {
     return `${this.config.baseUrl}/messages`;
@@ -61,6 +61,7 @@ class AnthropicAdapter implements IAIProvider {
       method: 'POST',
       headers,
       body,
+      signal: options?.signal,
     });
 
     if (!response.ok) {
@@ -199,17 +200,19 @@ class AnthropicAdapter implements IAIProvider {
 
   private getDefaultModels(): ModelInfo[] {
     return [
-      { id: 'claude-sonnet-4-20250514', name: 'Claude 4 Sonnet', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
-      { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus', contextWindow: 200000, maxOutputTokens: 32000, isFree: false },
-      { id: 'claude-haiku-4-20250514', name: 'Claude 4 Haiku', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
+      { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', contextWindow: 200000, maxOutputTokens: 32000, isFree: false },
+      { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
+      { id: 'claude-opus-4-5-20250514', name: 'Claude Opus 4.5', contextWindow: 200000, maxOutputTokens: 32000, isFree: false },
+      { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
     ];
   }
 
   private getMaxOutputTokens(modelId: string): number {
     const id = modelId.toLowerCase();
     if (id.includes('opus')) return 32000;
-    if (id.includes('sonnet') || id.includes('haiku')) return 64000;
-    return 16384; // Default para modelos anteriores
+    if (id.includes('haiku')) return 64000;
+    if (id.includes('sonnet')) return 64000;
+    return 16384;
   }
 }
 

@@ -77,6 +77,7 @@ export abstract class BaseOpenAIAdapter implements IAIProvider {
       method: 'POST',
       headers,
       body,
+      signal: options?.signal,
     });
 
     if (!response.ok) {

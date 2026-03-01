@@ -35,36 +35,34 @@ export function ErrorCard({
   provider,
 }: ErrorCardProps) {
   const { t } = useTranslation();
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(() => {
+    if (error.autoRetry && error.retryDelay && onRetry) {
+      return Math.ceil(error.retryDelay / 1000);
+    }
+    return null;
+  });
   const [isRetrying, setIsRetrying] = useState(false);
 
   // Auto-retry countdown
   useEffect(() => {
-    if (error.autoRetry && error.retryDelay && onRetry) {
-      const seconds = Math.ceil(error.retryDelay / 1000);
-      setCountdown(seconds);
-
-      const interval = setInterval(() => {
-        setCountdown(prev => {
-          if (prev === null || prev <= 1) {
-            clearInterval(interval);
-            return 0; // Marcar como listo para retry
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
+    if (countdown === null || !onRetry || isRetrying) {
+      return;
     }
-  }, [error.autoRetry, error.retryDelay]);
 
-  // Efecto separado para ejecutar retry cuando countdown llega a 0
-  useEffect(() => {
-    if (countdown === 0 && onRetry && !isRetrying) {
-      setIsRetrying(true);
-      setCountdown(null);
-      onRetry();
-    }
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev === null) return null;
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsRetrying(true);
+          onRetry();
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [countdown, onRetry, isRetrying]);
 
   const handleAction = (action: string) => {
