@@ -37,8 +37,7 @@ export function ProviderSelector({
   onValidateKey,
   onSelectModel,
 }: ProviderSelectorProps) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language as 'es' | 'en';
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
   const [editingProvider, setEditingProvider] = useState<string | null>(null);
@@ -102,7 +101,7 @@ export function ProviderSelector({
         ?.replace(':free', '')
         .replace(/-/g, ' ')
         .replace(/\b\w/g, l => l.toUpperCase()) || id,
-      vendor: id.split('/')[0],
+      vendor: id.includes('/') ? id.split('/')[0] : (currentProvider?.name || 'General'),
       contextWindow: 0,
       isFree: true,
     }));
@@ -118,11 +117,12 @@ export function ProviderSelector({
   const modelsByVendor = useMemo(() => {
     const grouped: Record<string, typeof availableModels> = {};
     availableModels.forEach(model => {
-      if (!grouped[model.vendor]) grouped[model.vendor] = [];
-      grouped[model.vendor].push(model);
+      const key = model.vendor ?? currentProvider?.name ?? 'General';
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(model);
     });
     return grouped;
-  }, [availableModels]);
+  }, [availableModels, currentProvider]);
 
   const handleSelectProvider = (provider: AIProviderConfig) => {
     onSelectProvider(provider.id);
@@ -208,7 +208,7 @@ export function ProviderSelector({
               <div className="p-2 border-b border-gray-100 dark:border-gray-800">
                 <p className="px-2 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1">
                   <Zap className="h-3 w-3 text-orange-400" />
-                  {t('provider.free')} (Sin tarjeta de crédito)
+                  {t('provider.free')} ({t('provider.noCreditCard')})
                 </p>
                 {freeProviders.map(provider => {
                   const status = getProviderStatus(provider);
@@ -295,7 +295,7 @@ export function ProviderSelector({
               <CardContent className="space-y-3">
                 <Input
                   type="password"
-                  placeholder={lang === 'es' ? "Pega tu API key aquí..." : "Paste your API key here..."}
+                  placeholder={t('provider.apiKeyPlaceholder')}
                   value={apiKeyInput}
                   onChange={e => setApiKeyInput(e.target.value)}
                   error={validationError || undefined}
@@ -357,10 +357,10 @@ export function ProviderSelector({
             <span className="flex items-center gap-2">
               <Cpu className="h-4 w-4 text-purple-500" />
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {lang === 'es' ? 'Modelo:' : 'Model:'}
+                {t('provider.model')}
               </span>
               <span className="font-medium truncate max-w-[180px]">
-                {selectedModelInfo?.name || 'Seleccionar...'}
+                {selectedModelInfo?.name || t('provider.selectModel')}
               </span>
             </span>
             <ChevronDown className={cn('h-4 w-4 transition-transform text-gray-400', isModelSelectorOpen && 'rotate-180')} />
@@ -405,9 +405,9 @@ export function ProviderSelector({
 
                 <div className="p-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    💡 {lang === 'es'
-                      ? 'Todos estos modelos son 100% gratuitos en OpenRouter'
-                      : 'All these models are 100% free on OpenRouter'}
+                    💡 {currentProvider?.isFree
+                      ? t('provider.freeModelHint', { provider: currentProvider.name })
+                      : t('provider.modelHint', { provider: currentProvider?.name })}
                   </p>
                 </div>
               </motion.div>

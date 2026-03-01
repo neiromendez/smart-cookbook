@@ -19,7 +19,6 @@ const ALLOWED_PROVIDERS = [
   'mistral',
   'deepseek',
   'xai',
-  'opencode',
   'huggingface',
 ];
 
@@ -35,7 +34,6 @@ const ALLOWED_HOSTS = [
   'api.mistral.ai',
   'api.deepseek.com',
   'api.x.ai',
-  'opencode.ai',
   'api-inference.huggingface.co',
   'huggingface.co',
 ];
@@ -51,7 +49,6 @@ const PROVIDER_ALLOWED_HOSTS: Record<string, string[]> = {
   mistral: ['api.mistral.ai'],
   deepseek: ['api.deepseek.com'],
   xai: ['api.x.ai'],
-  opencode: ['opencode.ai'],
   huggingface: ['api-inference.huggingface.co', 'huggingface.co'],
 };
 

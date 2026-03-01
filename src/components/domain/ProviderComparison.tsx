@@ -57,8 +57,7 @@ export function ProviderComparison({ onSelectProvider, onClose }: ProviderCompar
       key: 'speed',
       label: { es: 'Rápido', en: 'Fast' },
       icon: Zap,
-      getValue: (p: AIProviderConfig) =>
-        ['groq', 'cerebras', 'fireworks'].includes(p.id),
+      getValue: (p: AIProviderConfig) => !!p.isFast,
     },
   ];
 
@@ -66,7 +65,7 @@ export function ProviderComparison({ onSelectProvider, onClose }: ProviderCompar
     let score = 0;
     if (provider.isFree) score += 3;
     if (!provider.requiresCors) score += 2;
-    if (['groq', 'cerebras', 'fireworks'].includes(provider.id)) score += 1;
+    if (provider.isFast) score += 1;
     if (provider.freeModels && provider.freeModels.length > 3) score += 1;
     return Math.min(score, 5);
   };
