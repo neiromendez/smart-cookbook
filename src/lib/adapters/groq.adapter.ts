@@ -12,6 +12,15 @@ export class GroqAdapter extends BaseOpenAIAdapter {
   readonly config = AI_PROVIDERS.groq;
   readonly defaultModel = 'llama-3.3-70b-versatile';
 
+  // Groq incluye whisper, playai-tts, llama-guard y allam-2 (ASR, TTS, guardrails)
+  // en /openai/v1/models — todos deben excluirse del selector de chat
+  protected isChatModel(model: { id: string }): boolean {
+    const id = (model.id || '').toLowerCase();
+    const groqNonChat = ['whisper', 'playai', 'tts', 'guard', 'allam-2-prompt-guard'];
+    if (groqNonChat.some(p => id.includes(p))) return false;
+    return super.isChatModel(model);
+  }
+
   // Modelos por defecto cuando no hay API key (sincronizado con freeModels del config)
   protected getDefaultModels(): ModelInfo[] {
     return [

@@ -200,14 +200,15 @@ export abstract class BaseOpenAIAdapter implements IAIProvider {
       const data = await response.json();
       const models: ModelInfo[] = [];
 
-      // Parsear respuesta estándar OpenAI
-      for (const model of data.data || []) {
-        const id = model.id as string;
+      // Parsear respuesta estándar OpenAI, filtrando por capacidad de chat
+      for (const rawModel of data.data || []) {
+        if (!this.isChatModel(rawModel)) continue;
+        const id = rawModel.id as string;
         models.push({
           id,
           name: this.formatModelName(id),
-          contextWindow: model.context_window || model.context_length || 32768,
-          maxOutputTokens: model.max_output_tokens || this.getDefaultMaxOutputTokens(id),
+          contextWindow: rawModel.context_window || rawModel.context_length || 32768,
+          maxOutputTokens: rawModel.max_output_tokens || this.getDefaultMaxOutputTokens(id),
           isFree: this.config.isFree,
         });
       }
@@ -248,6 +249,20 @@ export abstract class BaseOpenAIAdapter implements IAIProvider {
     if (id.includes('deepseek')) return 8192;
     if (id.includes('qwen')) return 8192;
     return 4096; // Default conservador
+  }
+
+  /**
+   * Determina si un modelo devuelto por /models es apto para chat
+   * Override en subclases para filtrar por capabilities, type, prefijos, etc.
+   * Por defecto excluye patrones comunes de no-chat (embeddings, audio, guardrails...)
+   */
+  protected isChatModel(model: { id: string }): boolean {
+    const id = (model.id || '').toLowerCase();
+    const nonChatPatterns = [
+      'embed', 'whisper', 'tts', 'dall-e', 'dalle', 'moderation',
+      'audio', 'realtime', 'transcribe', 'guard', 'image',
+    ];
+    return !nonChatPatterns.some(p => id.includes(p));
   }
 
   /**

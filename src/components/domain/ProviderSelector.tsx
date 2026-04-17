@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ChevronDown, Zap, ExternalLink, Key, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Alert } from '@/components/ui/Alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { AI_PROVIDERS, getFreeProviders, getPaidProviders, getAdapter } from '@/lib/adapters';
 import type { AIProviderConfig, AIProviderKey, ModelInfo } from '@/types';
@@ -46,32 +47,34 @@ export function ProviderSelector({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [dynamicModels, setDynamicModels] = useState<ModelInfo[]>([]);
 
+  // Clave específica del proveedor actual para evitar re-fetch al cambiar keys ajenas
+  const currentProviderKey = apiKeys.find(k => k.provider === selectedProvider)?.key;
+
   // Efecto para cargar modelos dinámicos (especialmente para OpenRouter)
   useEffect(() => {
-    // Limpiar modelos del proveedor anterior inmediatamente
     setDynamicModels([]);
 
-    const fetchModels = async () => {
-      const adapter = getAdapter(selectedProvider);
-      if (!adapter) return;
+    const adapter = getAdapter(selectedProvider);
+    if (!adapter) return;
 
-      const apiKey = apiKeys.find(k => k.provider === selectedProvider)?.key;
+    let cancelled = false;
 
-      // Si ya tenemos modelos estáticos y no hay key, quizás no sea necesario,
-      // pero para OpenRouter queremos la lista actualizada si es posible.
-
-      try {
-        const models = await adapter.listModels(apiKey);
+    adapter.listModels(currentProviderKey)
+      .then(models => {
+        if (cancelled) return;
         if (models && models.length > 0) {
           setDynamicModels(models);
         }
-      } catch (error) {
+      })
+      .catch(error => {
+        if (cancelled) return;
         console.error('Error fetching models:', error);
-      }
-    };
+      });
 
-    fetchModels();
-  }, [selectedProvider, apiKeys]);
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedProvider, currentProviderKey]);
 
   const freeProviders = getFreeProviders();
   const paidProviders = getPaidProviders();
@@ -112,6 +115,11 @@ export function ProviderSelector({
   const modelExistsInList = savedModel && availableModels.some(m => m.id === savedModel);
   const selectedModel = modelExistsInList ? savedModel : availableModels[0]?.id;
   const selectedModelInfo = availableModels.find(m => m.id === selectedModel);
+
+  // Aviso cuando el modelo guardado ya no está disponible (p.ej. deprecado por el proveedor)
+  const shouldWarnStaleModel = Boolean(
+    currentApiKey?.validated && savedModel && !modelExistsInList && selectedModel
+  );
 
   // Agrupar modelos por vendor
   const modelsByVendor = useMemo(() => {
@@ -344,6 +352,18 @@ export function ProviderSelector({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Aviso: modelo guardado ya no está disponible */}
+      {shouldWarnStaleModel && selectedModelInfo && (
+        <Alert variant="warning">
+          <p className="text-sm">
+            {t('provider.modelNotAvailable', {
+              model: savedModel,
+              fallback: selectedModelInfo.name,
+            })}
+          </p>
+        </Alert>
+      )}
 
       {/* Selector de Modelo (solo para proveedores con múltiples modelos gratuitos) */}
       {currentApiKey?.validated && availableModels.length > 1 && (

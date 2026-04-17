@@ -14,9 +14,31 @@ import { BaseOpenAIAdapter } from './base-openai.adapter';
  * Soporta GET /models para listar modelos dinámicamente
  * NOTA: Mistral no soporta CORS - las llamadas pasan por el Edge Function
  */
+interface MistralModelShape {
+  id: string;
+  capabilities?: {
+    completion_chat?: boolean;
+    completion_fim?: boolean;
+    function_calling?: boolean;
+    vision?: boolean;
+  };
+}
+
 class MistralAdapter extends BaseOpenAIAdapter {
   readonly config = AI_PROVIDERS.mistral;
   readonly defaultModel = 'mistral-small-latest';
+
+  // Mistral expone capabilities.completion_chat en /v1/models
+  // Fallback: excluir embeddings/moderation/codestral-fim por nombre
+  protected isChatModel(model: MistralModelShape): boolean {
+    if (model.capabilities && typeof model.capabilities.completion_chat === 'boolean') {
+      return model.capabilities.completion_chat === true;
+    }
+    const id = (model.id || '').toLowerCase();
+    if (id.includes('embed') || id.includes('moderation')) return false;
+    if (id.startsWith('codestral') && id.includes('fim')) return false;
+    return true;
+  }
 
   // Modelos por defecto cuando no hay API key
   // Mistral usa ~4K como max output por defecto

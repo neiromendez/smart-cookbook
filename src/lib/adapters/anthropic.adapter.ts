@@ -200,9 +200,9 @@ class AnthropicAdapter implements IAIProvider {
 
   private getDefaultModels(): ModelInfo[] {
     return [
+      { id: 'claude-opus-4-7', name: 'Claude Opus 4.7', contextWindow: 1000000, maxOutputTokens: 32000, isFree: false },
       { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', contextWindow: 200000, maxOutputTokens: 32000, isFree: false },
       { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
-      { id: 'claude-opus-4-5-20250514', name: 'Claude Opus 4.5', contextWindow: 200000, maxOutputTokens: 32000, isFree: false },
       { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5', contextWindow: 200000, maxOutputTokens: 64000, isFree: false },
     ];
   }
