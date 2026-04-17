@@ -130,7 +130,8 @@
     "selectModel": "Seleccionar...",
     "modelHint": "Modelos disponibles para {{provider}}",
     "freeModelHint": "Todos estos modelos son gratuitos en {{provider}}",
-    "apiKeyPlaceholder": "Pega tu API key aquí..."
+    "apiKeyPlaceholder": "Pega tu API key aquí...",
+    "modelNotAvailable": "El modelo \"{{model}}\" ya no está disponible. Se seleccionó \"{{fallback}}\" como reemplazo."
   },
   "profile": {
     "title": "Tu Perfil de Chef",

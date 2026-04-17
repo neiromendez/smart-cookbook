@@ -14,9 +14,22 @@ import { BaseOpenAIAdapter } from './base-openai.adapter';
  * Soporta GET /models para listar TODOS los modelos dinámicamente
  * NOTA: Together AI no soporta CORS - las llamadas pasan por el Edge Function
  */
+interface TogetherModelShape {
+  id: string;
+  type?: string; // 'chat' | 'embedding' | 'image' | 'moderation'
+  display_name?: string;
+}
+
 class TogetherAdapter extends BaseOpenAIAdapter {
   readonly config = AI_PROVIDERS.together;
   readonly defaultModel = 'meta-llama/Llama-3.3-70B-Instruct-Turbo';
+
+  // Together expone el campo type directamente en la respuesta de /v1/models
+  protected isChatModel(model: TogetherModelShape): boolean {
+    if (model.type) return model.type === 'chat';
+    // Fallback: excluir patrones conocidos de no-chat
+    return super.isChatModel(model);
+  }
 
   // Modelos por defecto cuando no hay API key
   protected getDefaultModels(): ModelInfo[] {

@@ -131,9 +131,9 @@ export class OpenRouterAdapter implements IAIProvider {
   /**
    * Lista modelos disponibles dinámicamente desde la API de OpenRouter
    * OpenRouter soporta GET /models directamente (CORS habilitado)
+   * Devuelve TODOS los modelos de chat (gratis y de pago) marcando isFree
    */
   async listModels(apiKey?: string): Promise<ModelInfo[]> {
-    // Si hay API key, intentar obtener modelos dinámicamente
     if (apiKey) {
       try {
         const response = await fetch(`${this.config.baseUrl}/models`, {
@@ -147,24 +147,44 @@ export class OpenRouterAdapter implements IAIProvider {
           const data = await response.json();
           const models: ModelInfo[] = [];
 
-          // Filtrar modelos gratuitos y chat
           for (const model of data.data || []) {
-            const isFree = model.id?.endsWith(':free') ||
-                          (model.pricing?.prompt === '0' && model.pricing?.completion === '0');
+            // OpenRouter expone architecture.modality ("text->text", "text+image->text", "text->image", etc.)
+            // Un modelo es chat si produce texto como salida.
+            const modality: string = model.architecture?.modality || '';
+            const outputModalities: string[] = model.architecture?.output_modalities || [];
+            const id = (model.id || '').toLowerCase();
 
-            if (isFree) {
-              models.push({
-                id: model.id,
-                name: model.name || this.formatModelName(model.id),
-                contextWindow: model.context_length || 32768,
-                maxOutputTokens: model.top_provider?.max_completion_tokens || this.getMaxOutputTokens(model.id),
-                isFree: true,
-              });
+            let producesText: boolean;
+            if (outputModalities.length > 0) {
+              producesText = outputModalities.includes('text');
+            } else if (modality) {
+              producesText = modality.endsWith('->text') || modality === 'text';
+            } else {
+              // Fallback por nombre si no hay metadata
+              producesText = !['embedding', 'whisper', 'tts', 'image-generation'].some(p => id.includes(p));
             }
+            if (!producesText) continue;
+
+            // Detectar si es gratis: suffix :free o pricing en cero
+            const promptPrice = parseFloat(model.pricing?.prompt ?? '0');
+            const completionPrice = parseFloat(model.pricing?.completion ?? '0');
+            const isFree = model.id?.endsWith(':free') || (promptPrice === 0 && completionPrice === 0);
+
+            models.push({
+              id: model.id,
+              name: model.name || this.formatModelName(model.id),
+              contextWindow: model.context_length || 32768,
+              maxOutputTokens: model.top_provider?.max_completion_tokens || this.getMaxOutputTokens(model.id),
+              isFree,
+            });
           }
 
           if (models.length > 0) {
-            return models.sort((a, b) => a.name.localeCompare(b.name));
+            // Gratis primero, luego alfabético
+            return models.sort((a, b) => {
+              if (a.isFree !== b.isFree) return a.isFree ? -1 : 1;
+              return a.name.localeCompare(b.name);
+            });
           }
         }
       } catch (error) {
